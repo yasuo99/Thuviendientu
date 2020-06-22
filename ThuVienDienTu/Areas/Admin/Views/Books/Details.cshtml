@@ -1,0 +1,69 @@
+﻿@model ThuVienDienTu.Models.ViewModels.BooksViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Chi tiết</h1>
+
+<div>
+    <h4>Sách</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.BookName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.BookName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayFor(model => model.Book.BookImage)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="@Model.Book.BookImage" width="250" height="250" />
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.BookPrice)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.BookPrice)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Author)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Author.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Publisher)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Publisher.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Book.Accesscount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Book.Accesscount)
+        </dd>
+        <dt class="col-sm-2">
+            <label>Thể loại</label>
+        </dt>
+        @foreach(var genres in Model.GenresViewModels)
+        {
+            <dd>
+                @Html.Display(genres.Genres.GenresName);
+            </dd>
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Book.Id">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay lại</a>
+</div>

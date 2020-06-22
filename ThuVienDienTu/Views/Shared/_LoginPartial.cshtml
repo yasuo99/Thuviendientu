@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<ul class="navbar-nav float-lg-right" style="margin-right: 30px">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <div class="nav-link dropdown">
+                <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="height:40px">@await Component.InvokeAsync("Username")</a>
+                <div class="dropdown-content">
+                    @if (User.IsInRole("DOCGIA"))
+                    {
+                    <div style="text-align:center;border-radius:10px" class="dropdown-item">
+                        <label style="border-radius:10px;padding-top:15px">@await Component.InvokeAsync("Credit") </label>
+                        <a style="border-radius:10px" asp-area="Customer" asp-controller="Topup" asp-action="Index">Nạp thêm</a>
+                    </div>                       
+                        <a class="dropdown-item" style="border-radius:10px" asp-area="Customer" asp-controller="Books" asp-action="Index">Sách của tôi</a>
+                        <a class="dropdown-item" style="border-radius:10px" asp-area="Customer" asp-controller="ReadingLists" asp-action="Index">Danh sách đọc của tôi</a>
+                    }
+                    <a class="dropdown-item" style="border-radius:10px" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Đăng xuất</a>
+
+                    @*<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="btn-link dropdown-item" style="border-radius:10px;text-align:center">Đăng xuất</button>
+        </form>*@
+                </div>
+            </div>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <div class="nav-link dropdown">
+                <a class="dropbtn nav-link" asp-area="Identity" asp-page="/Account/Login"><i class="far fa-user"></i> Đăng nhập</a>
+                <div class="dropdown-content">
+                    <a class="dropdown-item" style="border-radius:10px" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+                    <a class="dropdown-item" style="border-radius:10px" asp-area="Identity" asp-page="/Account/Register">Đăng kí</a>
+                </div>
+            </div>
+        </li>
+
+    }
+</ul>

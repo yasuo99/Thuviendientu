@@ -1,0 +1,109 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-ThuVienDienTu-C502187A-BCCE-401E-AA83-7578760390A0</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200411151637_init.cs" />
+    <Compile Remove="Data\Migrations\20200411151637_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200411152348_init.cs" />
+    <Compile Remove="Data\Migrations\20200411152348_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200411152647_init.cs" />
+    <Compile Remove="Data\Migrations\20200411152647_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200412032652_init.cs" />
+    <Compile Remove="Data\Migrations\20200412032652_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200412073438_init.cs" />
+    <Compile Remove="Data\Migrations\20200412073438_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200414132459_init.cs" />
+    <Compile Remove="Data\Migrations\20200414132459_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200414143110_init.cs" />
+    <Compile Remove="Data\Migrations\20200414143110_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200507030043_init.cs" />
+    <Compile Remove="Data\Migrations\20200507030043_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200508012604_init.cs" />
+    <Compile Remove="Data\Migrations\20200508012604_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200508060741_init.cs" />
+    <Compile Remove="Data\Migrations\20200508060741_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200508065553_init.cs" />
+    <Compile Remove="Data\Migrations\20200508065553_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200508075204_init.cs" />
+    <Compile Remove="Data\Migrations\20200508075204_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200509054311_init.cs" />
+    <Compile Remove="Data\Migrations\20200509054311_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200510021359_init.cs" />
+    <Compile Remove="Data\Migrations\20200510021359_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200510085607_init.cs" />
+    <Compile Remove="Data\Migrations\20200510085607_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200510090347_init.cs" />
+    <Compile Remove="Data\Migrations\20200510090347_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200510111346_init.cs" />
+    <Compile Remove="Data\Migrations\20200510111346_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200510120918_init.cs" />
+    <Compile Remove="Data\Migrations\20200510120918_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200510145250_init.cs" />
+    <Compile Remove="Data\Migrations\20200510145250_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200511021112_init.cs" />
+    <Compile Remove="Data\Migrations\20200511021112_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200511031019_init.cs" />
+    <Compile Remove="Data\Migrations\20200511031019_init.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200515065618_init.cs" />
+    <Compile Remove="Data\Migrations\20200515065618_init.Designer.cs" />
+    <Compile Remove="Migrations\20200516015932_init.cs" />
+    <Compile Remove="Migrations\20200516015932_init.Designer.cs" />
+    <Compile Remove="Migrations\20200516021523_init.cs" />
+    <Compile Remove="Migrations\20200516021523_init.Designer.cs" />
+    <Compile Remove="Migrations\20200516062215_init.cs" />
+    <Compile Remove="Migrations\20200516062215_init.Designer.cs" />
+    <Compile Remove="Migrations\20200516064238_init.cs" />
+    <Compile Remove="Migrations\20200516064238_init.Designer.cs" />
+    <Compile Remove="Migrations\20200516065157_init.cs" />
+    <Compile Remove="Migrations\20200516065157_init.Designer.cs" />
+    <Compile Remove="Migrations\20200516074336_init.cs" />
+    <Compile Remove="Migrations\20200516074336_init.Designer.cs" />
+    <Compile Remove="Migrations\20200520032426_init.cs" />
+    <Compile Remove="Migrations\20200520032426_init.Designer.cs" />
+    <Compile Remove="Migrations\20200526154605_init.cs" />
+    <Compile Remove="Migrations\20200526154605_init.Designer.cs" />
+    <Compile Remove="Migrations\20200526155226_init.cs" />
+    <Compile Remove="Migrations\20200526155226_init.Designer.cs" />
+    <Compile Remove="Migrations\20200526155402_init.cs" />
+    <Compile Remove="Migrations\20200526155402_init.Designer.cs" />
+    <Compile Remove="Migrations\20200526160251_init.cs" />
+    <Compile Remove="Migrations\20200526160251_init.Designer.cs" />
+    <Compile Remove="Migrations\20200526161417_init.cs" />
+    <Compile Remove="Migrations\20200526161417_init.Designer.cs" />
+    <Compile Remove="Migrations\20200526161611_init.cs" />
+    <Compile Remove="Migrations\20200526161611_init.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bootstrap" Version="4.4.1" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
+    <PackageReference Include="PayPal" Version="1.9.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
+    <Folder Include="DesignPatterns\BuilderPatterns\" />
+    <Folder Include="TagHelpers\" />
+    <Folder Include="wwwroot\images\default\" />
+    <Folder Include="wwwroot\images\AuthorImage\" />
+    <Folder Include="wwwroot\images\BookImage\" />
+    <Folder Include="wwwroot\images\UserAvatar\" />
+    <Folder Include="wwwroot\images\PublisherImage\" />
+  </ItemGroup>
+
+</Project>

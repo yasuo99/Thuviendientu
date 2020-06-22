@@ -1,0 +1,61 @@
+﻿@model IEnumerable<ThuVienDienTu.Models.Publisher>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<br />
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Danh sách NXB</h2>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-area="Admin" asp-controller="Publishers" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm NXB</a>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PublisherName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublisherLogo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublisherName)
+                </td>
+                <td>
+                    <img src="@item.PublisherLogo" width="300" height="300" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country.Id)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Publishers" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                        <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Publishers" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                        <a type="button" class="btn btn-danger" asp-action="Delete" asp-controller="Pubishers" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

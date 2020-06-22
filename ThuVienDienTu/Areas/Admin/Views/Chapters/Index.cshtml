@@ -1,0 +1,72 @@
+﻿@model IEnumerable<ThuVienDienTu.Models.Chapter>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<br />
+<br />
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Danh sách chương</h2>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-area="Admin" asp-controller="Chapters" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm chương</a>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Book)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Chaptername)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChapterContent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EditDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUser)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Chaptername)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChapterContent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EditDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApplicationUser.Id)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Chapters" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                        <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Chapters" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                        <a type="button" class="btn btn-danger" asp-action="Delete" asp-controller="Chapters" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

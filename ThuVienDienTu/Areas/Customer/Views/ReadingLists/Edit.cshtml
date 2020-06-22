@@ -1,0 +1,45 @@
+﻿@model ThuVienDienTu.Models.ReadingList
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ReadingList</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ReadingListName" class="control-label"></label>
+                <input asp-for="ReadingListName" class="form-control" />
+                <span asp-validation-for="ReadingListName" class="text-danger"></span>
+            </div>
+            <fieldset>
+                <legend>Sách:</legend>
+                <div class="form-group row">
+                    @foreach (var book in Model.BookInLists)
+                    {
+                        <div class="col-8">
+                            <a asp-area="Customer" asp-controller="Read" asp-action="Index" asp-route-id="@book.BookId">@book.Book.BookName</a>
+                        </div>
+                        <div class="col-4">
+                            <a class="btn btn-danger" asp-area="Customer" asp-controller="ReadingLists" asp-action="RemoveFromList" asp-route-bookId="@book.BookId" asp-route-readingListId="@book.ReadingListId"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    }
+                </div>
+            </fieldset>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

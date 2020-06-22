@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ThuVienDienTu</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DigiLibrary</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row">
+                    <ul class="navbar-nav">
+                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                        {
+                            <li class="nav-item">
+                                <div class="nav-link dropdown">
+                                    <button class="dropbtn">Menu</button>
+                                    <div class="dropdown-content">
+                                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE))
+                                        {
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="AdminUser" asp-action="Index">Tài khoản</a>
+                                        }
+                                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                                        {
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Censor" asp-action="Index">Kiểm duyệt</a>
+                                        }
+                                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
+                                        {
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Books" asp-action="Index">Sách</a>
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Authors" asp-action="Index">Tác giả</a>
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Genres" asp-action="Index">Thể loại</a>
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Publishers" asp-action="Index">NXB</a>
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Reviews" asp-action="Index">Đánh giá</a>
+                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Admin" asp-controller="Tags" asp-action="Index">Thẻ tag</a>
+                                        }
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        <partial name="_SearchPartial" />
+                    </ul>
+                </div>
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </header>
+    <partial name="_CookieConsentPartial" />
+    <div class="main-content">
+        <div class="main-body-content">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Site footer -->
+    <footer class="border-top site-footer" style="position:absolute;margin-bottom:0;width:100%">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h6>About</h6>
+                    <p class="text-justify">Demo cho đồ án môn học công nghệ phần mềm</p>
+                    <h6>Tác giả</h6>
+                    <p class="text-justify">Luyện Ngọc Thanh</p>
+                    <p class="text-justify">Nguyễn Thanh Lập</p>
+                </div>
+
+                <div class="col-xs-6 col-md-3">
+                    <h6>Categories</h6>
+                    <ul class="footer-links">
+                        <li><a href="http://scanfcode.com/category/c-language/">C</a></li>
+                        <li><a href="http://scanfcode.com/category/front-end-development/">UI Design</a></li>
+                        <li><a href="http://scanfcode.com/category/back-end-development/">PHP</a></li>
+                        <li><a href="http://scanfcode.com/category/java-programming-language/">Java</a></li>
+                        <li><a href="http://scanfcode.com/category/android/">Android</a></li>
+                        <li><a href="http://scanfcode.com/category/templates/">Templates</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-xs-6 col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="footer-links">
+                        <li><a href="http://www.facebook.com/luyen.ngoc.thanh">About Us</a></li>
+                        <li><a href="https://www.facebook.com/lap.nguyenthanh.735507">Contact Us</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a></li>
+                        <li><a href="~/sitemap.xml">Sitemap</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://kit.fontawesome.com/70d04a055c.js" crossorigin="anonymous"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

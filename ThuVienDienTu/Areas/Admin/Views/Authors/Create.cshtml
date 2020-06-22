@@ -1,0 +1,69 @@
+﻿@model ThuVienDienTu.Models.Author
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Author</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group row">
+                <div class="col-3">
+                    <label asp-for="Avatar" class="control-label"></label>
+                </div>
+                <div class="col-7">
+                    <input class="form-control" type="file" name="files" />
+                </div>                
+            </div>
+            <div class="form-group row">
+                <div class="col-3">
+                    <label asp-for="FullName" class="control-label"></label>
+                </div>
+                <div class="col-7">
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>              
+            </div>
+            <div class="form-group row">
+                <div class="col-3">
+                    <label asp-for="Signed" class="control-label"></label>
+                </div>
+                <div class="col-7">
+                    <input asp-for="Signed" class="form-control" />
+                    <span asp-validation-for="Signed" class="text-danger"></span>
+                </div>              
+            </div>
+            <div class="form-group row">
+                <div class="col-3">
+                    <label asp-for="CountryId" class="control-label"></label>
+                </div>
+                <div class="col-7">
+                    <select asp-for="CountryId" class="form-control" asp-items="ViewBag.CountryId"></select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-3">
+                    <label asp-for="Description" class="control-label"></label>
+                </div>
+                <div class="col-7">
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+             
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Thêm tác giả" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Quay lại</a>
+</div>
+

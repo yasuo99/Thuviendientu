@@ -1,0 +1,71 @@
+﻿@model ThuVienDienTu.Models.ViewModels.ChaptersViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Chapter</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Censor.Id" hidden />
+            <input asp-for="Book.Id" hidden />
+            <h4>Tên sách: @Model.Book.BookName</h4>
+            <label>Các chương hiện có</label>
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            Tên chương
+                        </th>
+                        <th>
+                            Giá chương
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var chapter in Model.Chapters)
+                    {
+                    <tr>
+                        <td>@chapter.Chaptername</td>
+                        <td>@chapter.Price</td>
+                    </tr>                         
+                    }
+                </tbody>
+            </table>
+            <div class="form-group">
+                <label asp-for="Chapter.Chaptername" class="control-label"></label>
+                <input asp-for="Chapter.Chaptername" class="form-control" />
+                <span asp-validation-for="Chapter.Chaptername" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Chapter.ChapterContent" class="control-label"></label>
+                <input id="slider" onchange="ChangeFontSize()" type="range" min="10" max="100"><br />
+                <textarea id="chapterContent" asp-for="Chapter.ChapterContent" class="form-control" style="width:800px;height:600px"></textarea>
+                <span asp-validation-for="Chapter.ChapterContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Chapter.Price" class="control-label"></label>
+                <input asp-for="Chapter.Price" class="form-control" />
+                <span asp-validation-for="Chapter.Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Thêm chương" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-area="Admin" asp-controller="Books" asp-action="Index">Hủy</a>
+</div>
+<script>
+    function ChangeFontSize() {
+        var value = document.getElementById("slider").value;
+        document.getElementById("chapterContent").style.fontSize = value + "px";
+    }
+</script>

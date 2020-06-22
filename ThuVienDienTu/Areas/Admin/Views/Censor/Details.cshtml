@@ -1,0 +1,39 @@
+﻿@model ThuVienDienTu.Models.ViewModels.BooksViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <img src="@Model.Book.BookImage" width="200" height="200" />
+        </div>
+        <div class="col-sm-6">
+            <label>@Model.Book.BookName</label>
+            <a asp-area="Admin" asp-controller="Author" asp-action="Details" asp-route-id="@Model.Book.AuthorId">Tác giả: @Model.Book.Author.Signed</a>
+            <a asp-area="Admin" asp-controller="Publisher" asp-action="Details" asp-route-id="@Model.Book.PublisherId">NXB: @Model.Book.Publisher.PublisherName</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            @foreach(var chapter in Model.Chapters)
+            {
+                <a id="@chapter.Id">@chapter.Chaptername</a>
+            }
+        </div>
+        <div class="col-md-8">
+            @foreach(var chapter in Model.Chapters)
+            {
+                <textarea hidden id="@chapter.Id" style="width:600px;height:400px;resize:none">@chapter.ChapterContent</textarea>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    function Switch(id) {
+        //document.getElementsByTagName("textarea")
+    }
+</script>
+

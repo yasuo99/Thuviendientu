@@ -1,0 +1,62 @@
+﻿@model ThuVienDienTu.Models.ViewModels.BooksViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<br />
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Sách/ truyện của bạn</h2>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Mua thêm sách</a>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Book.BookName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book.Author.Signed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book.Publisher.PublisherName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Books)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.Signed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher.PublisherName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-primary" asp-area="Customer" asp-controller="Reviews" asp-action="Create"  asp-route-id="@item.Id"><i class="far fa-plus-square"></i></a>
+                        <a type="button" class="btn btn-success" asp-area="Customer" asp-action="Index" asp-controller="Read" asp-route-id="@item.Id"><i class="fas fa-book-reader"></i> </a>
+                        <a type="button" class="btn btn-info" asp-area="Admin" asp-action="Details" asp-controller="Books" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

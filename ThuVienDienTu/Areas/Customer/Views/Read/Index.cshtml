@@ -1,0 +1,76 @@
+﻿@model ThuVienDienTu.Models.ViewModels.BooksViewModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<br />
+<div class="container">
+
+    @if (Model.BuyRequest == null)
+    {
+        <div class="row">
+            @if (Model.Chapters.Count > 0)
+            {
+                <form asp-area="Admin" asp-controller="Chapters" asp-action="CensorEdit" method="post">
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Index">Trang chủ</a> @*<span>
+                        / <a asp-area="Customer" asp-controller="Home" asp-action="GenresBook" asp-route-id="@Model.Genres[0].Id">@Model.Genres[0].GenresName</a></span>*@<span> / <a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@Model.Chapters[0].Book.Id">@Model.Chapters[0].Book.BookName</a></span>
+                        <span> / @Model.Chapter.Chaptername</span>
+
+                        <hr />
+                        @if (!User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                        {
+                            <textarea disabled style="margin-left:75px;width:960px;height:3693px;resize:none;border:none;box-shadow:none;background-color:hsl(40,60%,95%)">@Model.Chapter.ChapterContent</textarea>
+                        }
+                        else
+                        {
+                            <input hidden asp-for="@Model.Chapter.Id" />
+                            <input hidden asp-for="@Model.Chapter.BookId" />
+                            <textarea asp-for="@Model.Chapter.ChapterContent" style="margin-left:75px;width:960px;height:3693px;resize:none;border:none;box-shadow:none;background-color:hsl(40,60%,95%)"></textarea>
+                        }
+                        @{ var count = HttpContextAccessor.HttpContext.Session.GetInt32("Index");
+                            var totalChapter = HttpContextAccessor.HttpContext.Session.GetInt32("TotalChapter");
+                            <div style="text-align:center!important;display:block">
+
+                                <a asp-area="Customer" asp-controller="Read" asp-action="DecreaseIndex" asp-route-id="@Model.Chapter.BookId" class="btn btn-secondary btn-lg"><i class="far fa-caret-square-left"></i> Chương trước</a>
+                                @if (User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                                {
+                                    <button type="submit" class="btn btn-success">Lưu</button>
+                                }
+                                <a asp-area="Customer" asp-controller="Read" asp-action="IncreaseIndex" asp-route-id="@Model.Chapter.BookId" class="btn btn-primary btn-lg">Chương tiếp <i class="far fa-caret-square-right"></i></a>
+
+                            </div>
+                            @if (User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                            {
+                                @if (count == totalChapter - 1)
+                                {
+                                    <div style="text-align:center!important">
+                                        <a asp-area="Admin" asp-controller="Censor" asp-action="Decline" asp-route-id="@Model.Chapter.BookId" class="btn btn-secondary btn-lg">Từ chối</a>
+                                        <a asp-area="Admin" asp-controller="Censor" asp-action="Approve" asp-route-id="@Model.Chapter.BookId" class="btn btn-success btn-lg">Phê duyệt</a>
+                                    </div>
+                                }
+                            }
+                        }
+                    </form>
+                }
+                else
+                {
+                    <p style="text-align:center">Sách hiện chưa có chương hoặc là sách trả phí</p>
+                }
+        </div>
+    }
+    else
+    {
+        <div style="text-align:center!important">
+            <p>@Model.BuyRequest</p>
+            <br />
+            <a class="btn btn-primary" asp-area="Customer" asp-controller="Read" asp-action="BuyChapter" asp-route-chapterId="@Model.Chapter.Id">Mua ngay</a>
+        </div>
+    }
+</div>
+
+
+
+

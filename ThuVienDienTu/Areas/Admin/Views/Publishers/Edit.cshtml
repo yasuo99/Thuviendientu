@@ -1,0 +1,60 @@
+﻿@model ThuVienDienTu.Models.Publisher
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Publisher</h4>
+<hr />
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <div class="col-3">
+            <label asp-for="PublisherName" class="control-label"></label>
+        </div>
+        <div class="col-7">
+            <input asp-for="PublisherName" class="form-control" />
+            <span asp-validation-for="PublisherName" class="text-danger"></span>
+        </div>   
+    </div>
+    <div class="form-group">
+        <input hidden asp-for="PublisherLogo"/>      
+        <div class="col-3">
+            <label asp-for="PublisherLogo" class="control-label"></label>
+            <img src="@Model.PublisherLogo" width="250" height="250"/>
+        </div>
+        <div class="col-7">
+            <input class="form-control" type="file" name="files"/>
+        </div>              
+    </div>
+    <div class="form-group">
+        <div class="col-3">
+            <label asp-for="Description" class="control-label"></label>
+        </div>
+        <div class="col-7">
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>            
+    </div>
+    <div class="form-group">
+        <div class="col-3">
+            <label asp-for="CountryId" class="control-label"></label>
+        </div>
+        <div class="col-7">
+            <select asp-for="CountryId" class="form-control" asp-items="ViewBag.CountryId"></select>
+            <span asp-validation-for="CountryId" class="text-danger"></span>
+        </div>    
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Lưu" class="btn btn-primary" />
+    </div>
+</form>
+
+
+<div>
+    <a asp-action="Index">Quay lại</a>
+</div>
+

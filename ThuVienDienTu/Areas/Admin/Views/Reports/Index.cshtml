@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ThuVienDienTu.Models.Report>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<br />
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Danh sách báo cáo</h2>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-area="Admin" asp-controller="Reports" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm báo cáo</a>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Reports" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                        <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Reports" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                        <a type="button" class="btn btn-danger" asp-action="Delete" asp-controller="Reports" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

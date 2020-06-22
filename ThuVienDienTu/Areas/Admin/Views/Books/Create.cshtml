@@ -1,0 +1,100 @@
+﻿@model ThuVienDienTu.Models.ViewModels.BooksViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Book</h4>
+<hr />
+<form asp-action="Create" enctype="multipart/form-data" method="post">
+    <div class="p-4 border rounded">
+        @if (ViewBag.SameBook != null)
+        {
+            <div class="text-danger">@ViewBag.SameBook</div>
+        }
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Book.BookName" class="control-label"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Book.BookName" class="form-control" />
+                <span asp-validation-for="Book.BookName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Book.BookImage" class="control-label"></label>
+            </div>
+            <div class="col-6">
+                <input type="file" name="files" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Book.Description" class="control-label"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Book.Description" class="form-control" />
+                <span asp-validation-for="Book.Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Book.BookPrice" class="control-label"></label>
+            </div>
+            <div class="col-6">
+                <input asp-for="Book.BookPrice" class="form-control" />
+                <span asp-validation-for="Book.BookPrice" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Book.Author" class="control-label"></label>
+            </div>
+            <div class="col-6">
+                <select asp-for="Book.AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-3">
+                <label asp-for="Book.Publisher" class="control-label"></label>
+            </div>
+            <div class="col-6">
+                <select asp-for="Book.PublisherId" class="form-control" asp-items="ViewBag.PublisherId"></select>
+            </div>
+        </div>
+        <fieldset class="border border-light">
+            <legend>Thể loại</legend>
+            @if (Model.GenresViewModels.Count > 0)
+            {
+                for (int i = 0; i < Model.GenresViewModels.Count; i++)
+                {
+                    <div class="row">
+                        <label class="col-3 control-label">@Model.GenresViewModels[i].Genres.GenresName</label>
+                        <input type="hidden" asp-for="@Model.GenresViewModels[i].Genres.Id" />
+                        <input class="col-6 form-control" type="checkbox" asp-for="@Model.GenresViewModels[i].Selected" />
+                    </div>
+                }
+            }
+        </fieldset>
+        <div class="form-group row">
+            <div class="col-3">
+                <label>Thẻ tag</label>
+            </div>
+            <div class="col-6">
+                <input class="form-control" asp-for="@Model.BareTag" />
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Thêm sách" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Quay lại</a>
+</div>
+

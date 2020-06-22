@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ThuVienDienTu.Models.Tag>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info"> Danh sách thẻ tag</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a asp-area="Admin" asp-controller="Tags" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm thẻ tag</a>
+        </div>
+    </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Tagname)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tagname)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,45 @@
+﻿@model ThuVienDienTu.Models.ViewModels.CountryViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br />
+<br />
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Danh sách quốc gia</h2>
+        <h4 class="text-info">Tổng số: @Model.Total</h4>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-area="Admin" asp-controller="Countries" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm quốc gia</a>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Country.CountryName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Countries)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CountryName)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-primary" asp-action="Edit" asp-controller="Countries" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                        <a type="button" class="btn btn-success" asp-action="Details" asp-controller="Countries" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                        <a type="button" class="btn btn-danger" asp-action="Delete" asp-controller="Countries" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
+                    </div>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
