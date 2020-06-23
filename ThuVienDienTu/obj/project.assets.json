@@ -9975,19 +9975,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Thanh\\.nuget\\packages\\": {}
+    "C:\\Users\\Minh Khue PC\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Thanh\\source\\repos\\ThuVienDienTu\\ThuVienDienTu\\ThuVienDienTu.csproj",
+      "projectUniqueName": "C:\\Users\\Minh Khue PC\\Desktop\\Thuviendientu\\ThuVienDienTu\\ThuVienDienTu.csproj",
       "projectName": "ThuVienDienTu",
-      "projectPath": "C:\\Users\\Thanh\\source\\repos\\ThuVienDienTu\\ThuVienDienTu\\ThuVienDienTu.csproj",
-      "packagesPath": "C:\\Users\\Thanh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Thanh\\source\\repos\\ThuVienDienTu\\ThuVienDienTu\\obj\\",
+      "projectPath": "C:\\Users\\Minh Khue PC\\Desktop\\Thuviendientu\\ThuVienDienTu\\ThuVienDienTu.csproj",
+      "packagesPath": "C:\\Users\\Minh Khue PC\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Minh Khue PC\\Desktop\\Thuviendientu\\ThuVienDienTu\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Thanh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Minh Khue PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

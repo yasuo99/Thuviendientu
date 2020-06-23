@@ -33,7 +33,7 @@ namespace ThuVienDienTu.DesignPatterns.RepositoryPatterns
 
         public async Task Delete(object id)
         {
-            var country = _context.Countries.Find(id);
+            var country = await _context.Countries.FindAsync(id);
             _context.Remove(country);
         }
 

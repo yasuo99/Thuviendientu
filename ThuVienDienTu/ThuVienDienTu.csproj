@@ -97,7 +97,6 @@
 	
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
-    <Folder Include="DesignPatterns\BuilderPatterns\" />
     <Folder Include="TagHelpers\" />
     <Folder Include="wwwroot\images\default\" />
     <Folder Include="wwwroot\images\AuthorImage\" />
