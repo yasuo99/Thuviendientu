@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ThuVienDienTu.DesignPatterns;
+using ThuVienDienTu.DesignPatterns.SingletonPatterns;
 
 namespace ThuVienDienTu
 {
@@ -31,6 +32,7 @@ namespace ThuVienDienTu
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            services.AddSingleton<ISingleton, Singleton>();
             services.AddIdentity<IdentityUser,IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI().AddDefaultTokenProviders();
             services.AddMvc(options => options.EnableEndpointRouting = false);

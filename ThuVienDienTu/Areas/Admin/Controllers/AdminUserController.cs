@@ -35,7 +35,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                 ApplicationUser = new ApplicationUser()
             };
         }
-        public IActionResult Index(int productPage = 1)
+        public IActionResult Index(int productPage = 1, string q = null)
         {
             ApplicationUserViewModel ApplicationUserVM = new ApplicationUserViewModel()
             {
@@ -55,7 +55,14 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                 TotalItems = count,
                 urlParam = param.ToString()
             };
-
+            if(q == "Active")
+            {
+                ApplicationUserVM.ApplicationUsers = ApplicationUserVM.ApplicationUsers.Where(u => u.LockoutEnd.HasValue == false).ToList();
+            }    
+            if(q == "Deactive")
+            {
+                ApplicationUserVM.ApplicationUsers = ApplicationUserVM.ApplicationUsers.Where(u => u.LockoutEnd.HasValue == true).ToList();
+            }
             return View(ApplicationUserVM);
         }
 

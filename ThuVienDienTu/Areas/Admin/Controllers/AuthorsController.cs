@@ -41,7 +41,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Authors
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         public async Task<IActionResult> Index(int productPage = 1)
         {
             var authors = await _context.Authors.Include(a => a.Country).ToListAsync();

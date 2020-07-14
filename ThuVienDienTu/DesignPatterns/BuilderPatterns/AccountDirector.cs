@@ -16,6 +16,7 @@ namespace ThuVienDienTu.DesignPatterns.BuilderPatterns
         public void Construct()
         {
             _builder.BuildInfor();
+            _builder.BuildDate();
             _builder.BuildAccount();
         }
         public ApplicationUser GetAccount()

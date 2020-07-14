@@ -25,6 +25,7 @@ namespace ThuVienDienTu.Models.ViewModels
         public List<Review> Reviews { get; set; }
         public PagingInfo PagingInfo { get; set; }
         public List<ReadingListViewModel> ReadingListsVM { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
         public string Error { get; set; }
         public string BuyRequest { get; set; }
         public bool AlreadyBought { get; set; }

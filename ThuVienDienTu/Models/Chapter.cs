@@ -18,9 +18,14 @@ namespace ThuVienDienTu.Models
         public string ChapterContent { get; set; }
         [Display(Name = "Giá")]
         public int Price { get; set; }
+        [Display(Name = "Ngày chỉnh sửa")]
         public DateTime EditDate { get; set; }
+        [Display(Name = "Người chỉnh sửa")]
         public string ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
+        [Display(Name = "Trạng thái")]
+        public bool Approved { get; set; }
         public virtual ICollection<Purchased> Purchases { get; set; }
+        public virtual ICollection<ReadingHistory> ReadingHistories { get; set; }
     }
 }

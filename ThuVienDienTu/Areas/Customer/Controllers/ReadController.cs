@@ -35,11 +35,18 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
         }
         public async Task<IActionResult> Index(int id)
         {
-            
+
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claimsUser = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            var user = await _db.ApplicationUsers.Where(u => u.Id == claimsUser.Value).FirstOrDefaultAsync();
-            var alreadyBought = await _db.Purchaseds.Where(u => u.Chapter.BookId == id && u.ApplicationUserId == user.Id).FirstOrDefaultAsync();
+            Purchased alreadyBought = new Purchased();
+            ApplicationUser user = new ApplicationUser();
+            ReadingHistory readingHistory = new ReadingHistory();
+            if (claimsUser != null)
+            {
+                user = await _db.ApplicationUsers.Where(u => u.Id == claimsUser.Value).FirstOrDefaultAsync();
+                alreadyBought = await _db.Purchaseds.Where(u => u.Chapter.BookId == id && u.ApplicationUserId == user.Id).FirstOrDefaultAsync();
+                readingHistory = await _db.ReadingHitories.Where(u => u.ApplicationUserId == user.Id && u.Chapter.BookId == id).FirstOrDefaultAsync();
+            }
             var book = await _db.Books.Where(u => u.Id == id).FirstOrDefaultAsync();
             if (alreadyBought != null || book.BookPrice == 0 || User.IsInRole(SD.CENSOR_ROLE) || User.IsInRole(SD.ADMIN_ROLE) || User.IsInRole(SD.LIBRARIAN_ROLE))
             {
@@ -52,23 +59,33 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
                               where a.Id == id
                               select c).ToList();
                 var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id).Include(u => u.Book).ToListAsync();
-                var currentIndex = HttpContext.Session.GetInt32("Index");
+
                 if (chaptersOfBook.Count > 0)
                 {
-                    if (currentIndex == null)
+                    if (readingHistory != null)
                     {
-                        HttpContext.Session.SetInt32("Index", 0);
+                        BooksVM.Chapter = await _db.Chapters.Where(u => u.Id == readingHistory.ChapterId).FirstOrDefaultAsync();
                     }
                     else
                     {
-                        chapter = chaptersOfBook[currentIndex.Value];
+                        ReadingHistory history = new ReadingHistory()
+                        {
+                            ApplicationUserId = user.Id,
+                            ChapterId = chaptersOfBook[0].Id
+                        };
+                        _db.ReadingHitories.Add(history);
+                        await _db.SaveChangesAsync();
+                        BooksVM.Chapter = chaptersOfBook[0];
                     }
                 }
-                HttpContext.Session.SetInt32("TotalChapter", chaptersOfBook.Count);
+
                 BooksVM.Chapters = chaptersOfBook;
-                BooksVM.Chapter = chapter;
+                if (User.IsInRole(SD.CENSOR_ROLE))
+                {
+                    BooksVM.Chapters = chaptersOfBook.Where(u => u.Approved == false).ToList();
+                }
                 BooksVM.Genres = genres;
-                
+
             }
             else
             {
@@ -90,19 +107,18 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
             var chapter = await _db.Chapters.Where(u => u.Id == id).Include(u => u.Book).FirstOrDefaultAsync();
             Purchased alreadyBought = new Purchased();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
-            if(claimsIdentity.Claims.Count() > 0)
+            if (claimsIdentity.Claims.Count() > 0)
             {
                 var claimsUser = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
                 var user = await _db.ApplicationUsers.Where(u => u.Id == claimsUser.Value).FirstOrDefaultAsync();
-                
+
                 alreadyBought = await _db.Purchaseds.Where(u => u.ChapterId == chapter.Id && u.ApplicationUserId == user.Id).FirstOrDefaultAsync();
+                var readingHistory = await _db.ReadingHitories.Where(u => u.Chapter.BookId == chapter.BookId).FirstOrDefaultAsync();
             }
             if (alreadyBought != null || chapter.Price == 0 || User.IsInRole(SD.ADMIN_ROLE) || User.IsInRole(SD.CENSOR_ROLE) || User.IsInRole(SD.LIBRARIAN_ROLE))
             {
                 var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == chapter.Book.Id).Include(u => u.Book).ToListAsync();
                 var index = chaptersOfBook.IndexOf(chapter);
-                HttpContext.Session.SetInt32("Index", index);
-                HttpContext.Session.SetInt32("TotalChapter", chaptersOfBook.Count);
                 BooksVM.Chapter = chapter;
                 BooksVM.Chapters = chaptersOfBook;
                 return View(nameof(Index), BooksVM);
@@ -116,23 +132,30 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
                 return View(nameof(Index), BooksVM);
             }
         }
-        public IActionResult DecreaseIndex(int id)
+        public async Task<IActionResult> DecreaseIndex(int id)
         {
-            var currentIndex = HttpContext.Session.GetInt32("Index");
-            if (currentIndex != null && currentIndex >= 1 && currentIndex.HasValue)
+            var readingHitory = await _db.ReadingHitories.Where(u => u.Chapter.BookId == id).FirstOrDefaultAsync();
+            var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
+            var index = chaptersOfBook.IndexOf(readingHitory.Chapter);
+            if (index > 0)
             {
-                HttpContext.Session.SetInt32("Index", currentIndex.Value - 1);
+                readingHitory.ChapterId = chaptersOfBook[index-1].Id;
+
             }
+            await _db.SaveChangesAsync();
             return RedirectToAction("Index", new { id = id });
         }
-        public IActionResult IncreaseIndex(int id)
+        public async Task<IActionResult> IncreaseIndex(int id)
         {
-            var currentIndex = HttpContext.Session.GetInt32("Index");
-            var totalChapter = HttpContext.Session.GetInt32("TotalChapter");
-            if (currentIndex.HasValue && currentIndex.Value < totalChapter.Value - 1)
+            var readingHitory = await _db.ReadingHitories.Where(u => u.Chapter.BookId == id).FirstOrDefaultAsync();
+            var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
+            var index = chaptersOfBook.IndexOf(readingHitory.Chapter);
+            
+            if (index < chaptersOfBook.Count - 1)
             {
-                HttpContext.Session.SetInt32("Index", currentIndex.Value + 1);
+                readingHitory.ChapterId = chaptersOfBook[index + 1].Id;
             }
+            await _db.SaveChangesAsync();
             return RedirectToAction("Index", new { id = id });
         }
         public async Task<IActionResult> BuyChapter(int chapterId)

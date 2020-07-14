@@ -1,247 +1,620 @@
 ﻿@model ThuVienDienTu.Models.ViewModels.BooksViewModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 @{
     ViewData["Title"] = "Details";
+    Layout = null;
 }
+<!DOCTYPE html>
 
-<br />
-<hr />
-<div class="container">
-    @if (Model.Error != null)
-    {
-        <div class="text-danger">@Model.Error</div>
-        <a class="btn btn-primary" asp-area="Customer" asp-controller="Topup" asp-action="Index">Nạp ngay</a>
-    }
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-3">
-                <img src="@Model.Book.BookImage" width="200" height="200" />
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ThuVienDienTu</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:400,700|Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/animate.css">
+    <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="~/fonts/flaticon/font/flaticon.css">
+    <link rel="stylesheet" href="~/css/aos.css">
+    <link rel="stylesheet" href="~/css/jquery.fancybox.min.css">
+
+
+    <link rel="stylesheet" href="~/css/style.css">
+    <style>
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+    </style>
+
+    <script type="application/x-javascript">
+        addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
+               function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- //tags -->
+    @*<link href="\product_detail\css\bootstrap.css" rel="stylesheet" type="text/css" media="all" />*@
+    <link rel="stylesheet" href="\product_detail\css\flexslider.css" type="text/css" media="screen" />
+    <link href="\product_detail\css\font-awesome.css" rel="stylesheet">
+    <link href="\product_detail\css\easy-responsive-tabs.css" rel='stylesheet' type='text/css' />
+    <link href="\product_detail\css\style.css" rel="stylesheet" type="text/css" media="all" />
+
+    <!-- //for bootstrap working -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800" rel="stylesheet">
+    <link href='//fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,900,900italic,700italic' rel='stylesheet' type='text/css'>
+</head>
+<body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+
+    <div class="site-wrap">
+
+        <div class="site-mobile-menu site-navbar-target">
+            <div class="site-mobile-menu-header">
+                <div class="site-mobile-menu-close mt-3">
+                    <span class="icon-close2 js-menu-toggle"></span>
+                </div>
             </div>
-            <div class="col-md col-sm-9">
-                <label>@Model.Book.BookName</label>
-                <br />
-                Tác giả: <a asp-area="Admin" asp-controller="Authors" asp-action="Details" asp-route-id="@Model.Book.Author.Id">@Model.Book.Author.Signed</a> <br />
-                NXB: <a asp-area="Admin" asp-controller="Publishers" asp-action="Details" asp-route-id="@Model.Book.Publisher.Id">@Model.Book.Publisher.PublisherName</a>
-                <p>Giá: @Model.Book.BookPrice Lượng</p>
-                <br />
-                <form asp-controller="Home" asp-action="Details" method="post">
-                    <input asp-for="@Model.Book.Id" hidden />
-                    @if (Model.Book.BookPrice > 0)
-                    {
-                        <div class="row">
-                            @if (Model.AlreadyBought == false)
-                            {
-                                <div class="col-sm-2">
-                                    <button type="submit" value="Add to Bag" class="btn btn-primary form-control"><i class="fas fa-shopping-cart"></i> Mua</button>
-                                </div>
-                                <div class="col-sm-2">
-                                    <button asp-area="Customer" asp-controller="Read" asp-action="TrialRead" asp-route-id="@Model.Book.Id" value="Add to Bag" class="btn btn-primary form-control"><i class="fas fa-book-reader"></i> Đọc thử</button>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="col-sm-2">
-                                    <button asp-area="Customer" asp-controller="Read" asp-action="Index" asp-route-id="@Model.Book.Id" value="Add to Bag" class="btn btn-primary form-control"><i class="fas fa-book-reader"></i> Đọc ngay</button>
-                                </div>
-                                <div class="col-sm-2 dropdown">
+            <div class="site-mobile-menu-body"></div>
+        </div> <!-- .site-mobile-menu -->
 
-                                    <button class="dropbtn"><i class="far fa-heart"></i> Thêm vào danh sách đọc</button>
-                                    <div class="dropdown-content">
-                                        @if (Model.ReadingListsVM.Count > 0)
+
+        <div class="site-navbar-wrap">
+
+            <div class="site-navbar site-navbar-target js-sticky-header">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-6 col-lg-3">
+                            <h1 class="my-0 site-logo"><a asp-action="Index">LTTH</a></h1>
+                        </div>
+                        <div class="col-6 col-lg-9">
+                            <nav class="site-navigation text-right" role="navigation">
+                                <div class="container">
+
+                                    <div class="d-inline-block d-lg-none ml-md-0 mr-auto py-3 ">
+                                        <a href="#" class="site-menu-toggle js-menu-toggle text-black">
+                                            <span class="icon-menu h3"></span>
+                                        </a>
+                                    </div>
+
+                                    <ul class="site-menu main-menu js-clone-nav d-none d-lg-block">
+                                        <li><a href="#home-section" class="nav-link">Home</a></li>
+                                        <li><a href="#products-section" class="nav-link">Products</a></li>
+                                        <li><a href="#about-section" class="nav-link">About Author</a></li>
+                                        <li><a href="#contact-section" class="nav-link">Contact</a></li>
+                                        @if (SignInManager.IsSignedIn(User))
                                         {
-                                            @foreach (var readingList in Model.ReadingListsVM)
-                                            {
-                                                if (readingList.AlreadyIn)
-                                                {
-                                                    <a class="btn btn btn-danger" asp-area="Customer" asp-controller="ReadingLists" asp-action="RemoveFromList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
-                                                }
-                                                else
-                                                {
-                                                    <a class="btn btn-success" asp-area="Customer" asp-controller="ReadingLists" asp-action="AddToList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
-                                                }
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" style="height:40px">@await Component.InvokeAsync("Username")</a>
+                                                    <div class="dropdown-content">
+                                                        @if (User.IsInRole("DOCGIA"))
+                                                        {
+                                                            <div style="text-align:center;border-radius:10px" class="dropdown-item">
+                                                                <label style="border-radius:10px;padding-top:15px">@await Component.InvokeAsync("Credit") </label>
+                                                                <a style="border-radius:10px" asp-area="Customer" asp-controller="Topup" asp-action="Index">Nạp thêm</a>
+                                                            </div>
+                                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Customer" asp-controller="Books" asp-action="Index">Sách của tôi</a>
+                                                            <a class="dropdown-item" style="border-radius:10px" asp-area="Customer" asp-controller="ReadingLists" asp-action="Index">Danh sách đọc của tôi</a>
+                                                        }
+                                                        <a class="dropdown-item" style="border-radius:10px" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Đăng xuất</a>
 
-                                            }
+                                                        @*<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                                                <button type="submit" class="btn-link dropdown-item" style="border-radius:10px;text-align:center">Đăng xuất</button>
+                                                            </form>*@
+                                                    </div>
+                                                </div>
+                                            </li>
                                         }
                                         else
                                         {
-                                            <a class="btn btn-primary" asp-area="Customer" asp-controller="ReadingLists" asp-action="Create"><i class="far fa-heart"></i> Tạo danh sách đọc</a>
+                                            <li>
+                                                <div class="dropdown">
+                                                    <a class="dropbtn nav-link" asp-area="Identity" asp-page="/Account/Login"><i class="far fa-user"></i> Đăng nhập</a>
+                                                    <div class="dropdown-content">
+                                                        <a class="dropdown-item" style="border-radius:10px" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+                                                        <a class="dropdown-item" style="border-radius:10px" asp-area="Identity" asp-page="/Account/Register">Đăng kí</a>
+                                                    </div>
+                                                </div>
+                                            </li>
 
                                         }
-                                    </div>
+                                    </ul>
                                 </div>
-                            }
+                            </nav>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="row">
-                            <div class="col-sm-2" style="width:80px;padding:0">
-                                <a asp-area="Customer" asp-controller="Read" asp-action="Index" asp-route-id="@Model.Book.Id" class="btn btn-primary"><i class="fas fa-book-reader"></i> Đọc</a>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- END .site-navbar-wrap -->
+        @*<h1 style="text-align:center;color:grey;margin-top:40px;font-family:Bahnschrift;font-size:30px">CHI TIẾT</h1>*@
+        <div class="site-section bg-light">
+            <div class="container">
+                <div class="row">
+                    @*<div class="row mb-5">
+                            <div class="col-md-7">
                             </div>
-                            <div class="col-sm-4 dropdown" style="width:222px;padding:0">
-                                <button class="drop-btn btn btn-primary"><i class="far fa-heart"></i> Thêm vào danh sách đọc</button>
-                                <div class="dropdown-link">
-                                    @if (Model.ReadingListsVM.Count > 0)
-                                    {
-                                        @foreach (var readingList in Model.ReadingListsVM)
-                                        {
-                                            if (readingList.AlreadyIn)
-                                            {
-                                                <a class="btn btn-danger" asp-area="Customer" asp-controller="ReadingLists" asp-action="RemoveFromList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
-                                            }
-                                            else
-                                            {
-                                                <a class="btn btn-success" asp-area="Customer" asp-controller="ReadingLists" asp-action="AddToList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
-                                            }
+                        </div>*@
+                    @if (Model.Error != null)
+                    {
+                        <div class="text-danger">@Model.Error</div>
+                        <a class="btn btn-primary" asp-area="Customer" asp-controller="Topup" asp-action="Index">Nạp ngay</a>
+                    }
+                    <div class="col-md-6 single-right-left ">
+                        <ul class="slides">
+                            <li data-thumb="images/d2.jpg">
+                                <div class="thumb-image"> <img src="@Model.Book.BookImage" data-imagezoom="true" class="img-responsive"> </div>
+                            </li>
 
+                        </ul>
+                    </div>
+                    <div class="col-md-6 single-right-left simpleCart_shelfItem">
+                        <label id="detail">@Model.Book.BookName</label>
+                        <br />
+                        Tác giả: <a asp-area="Admin" asp-controller="Authors" asp-action="Details" asp-route-id="@Model.Book.Author.Id">@Model.Book.Author.Signed</a> <br />
+                        NXB: <a asp-area="Admin" asp-controller="Publishers" asp-action="Details" asp-route-id="@Model.Book.Publisher.Id">@Model.Book.Publisher.PublisherName</a>
+                        <p>Giá: @Model.Book.BookPrice Lượng</p>
+                        <br />
+                        <form asp-controller="Home" asp-action="Details" method="post">
+                            <input asp-for="@Model.Book.Id" hidden autofocus />
+                            @if (Model.Book.BookPrice > 0)
+                            {
+                                <div class="row">
+                                    @if (Model.AlreadyBought == false)
+                                    {
+                                        @if (Model.Chapters.Count > 0)
+                                        {
+                                            <div class="col-sm-6">
+                                                <button class="btn btn-primary btn-lg" style="width:100%;background-color:black" type="submit" value="Add to Bag"><i class="fas fa-shopping-cart"></i> Mua</button>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <button class="btn btn-primary btn-lg" style="width:100%;background-color:black" asp-area="Customer" asp-controller="Read" asp-action="TrialRead" asp-route-id="@Model.Book.Id" value="Add to Bag"><i class="fas fa-book-reader"></i> Đọc thử</button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-6 text-primary">
+                                                Sách hiện chưa có chương
+                                            </div>
                                         }
                                     }
                                     else
                                     {
-                                        <a class="btn btn-dark" asp-area="Customer" asp-controller="ReadingLists" asp-action="Create"><i class="far fa-heart"></i> Tạo danh sách đọc</a>
+                                        <div class="col-sm-2">
+                                            <button asp-area="Customer" asp-controller="Read" asp-action="Index" asp-route-id="@Model.Book.Id" value="Add to Bag"><i class="fas fa-book-reader"></i> Đọc ngay</button>
+                                        </div>
+                                        <div class="col-sm-2 dropdown">
 
+                                            <button class="dropbtn"><i class="far fa-heart"></i> Thêm vào danh sách đọc</button>
+                                            <div class="dropdown-content">
+                                                @if (Model.ReadingListsVM.Count > 0)
+                                                {
+                                                    @foreach (var readingList in Model.ReadingListsVM)
+                                                    {
+                                                        if (readingList.AlreadyIn)
+                                                        {
+                                                            <a class="btn btn btn-danger" asp-area="Customer" asp-controller="ReadingLists" asp-action="RemoveFromList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a class="btn btn-success" asp-area="Customer" asp-controller="ReadingLists" asp-action="AddToList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
+                                                        }
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <a class="btn btn-primary" asp-area="Customer" asp-controller="ReadingLists" asp-action="Create"><i class="far fa-heart"></i> Tạo danh sách đọc</a>
+
+                                                }
+                                            </div>
+                                        </div>
                                     }
                                 </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-sm-2" style="width:80px;padding:0">
+                                        <a asp-area="Customer" asp-controller="Read" asp-action="Index" asp-route-id="@Model.Book.Id" class="btn btn-primary"><i class="fas fa-book-reader"></i> Đọc</a>
+                                    </div>
+                                    <div class="col-sm-4 dropdown" style="width:222px;padding:0">
+                                        <button class="drop-btn btn btn-primary"><i class="far fa-heart"></i> Thêm vào danh sách đọc</button>
+                                        <div class="dropdown-link">
+                                            @if (Model.ReadingListsVM.Count > 0)
+                                            {
+                                                @foreach (var readingList in Model.ReadingListsVM)
+                                                {
+                                                    if (readingList.AlreadyIn)
+                                                    {
+                                                        <a class="btn btn-danger" asp-area="Customer" asp-controller="ReadingLists" asp-action="RemoveFromList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="btn btn-success" asp-area="Customer" asp-controller="ReadingLists" asp-action="AddToList" asp-route-bookId="@Model.Book.Id" asp-route-readingListId="@readingList.ReadingList.Id">@readingList.ReadingList.ReadingListName</a>
+                                                    }
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-dark" asp-area="Customer" asp-controller="ReadingLists" asp-action="Create"><i class="far fa-heart"></i> Tạo danh sách đọc</a>
+
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="responsive_tabs_agileits">
+                <div id="horizontalTab">
+
+                    <div class="resp-tabs-container">
+                        <!--/tab_one-->
+                        <div class="tab1">
+
+                            <div class="single_page_agile_its_w3ls">
+                                <ul class="link">
+                                    <li id="tab-1" class="link-item active" onclick="ShowDescr()">Giới thiệu</li>
+                                    <li id="tab-2" class="link-item" onclick="ShowListChapter()">Danh sách chương</li>
+                                    <li id="tab-4" class="link-item" onclick="ShowReview()">Đánh giá</li>
+                                    <li id="tab-3" class="link-item" onclick="ShowComment()">Bình luận</li>
+                                </ul>
+                                <textarea id="description" class="content" readonly disabled style="width:600px;height:400px;resize:none;box-shadow:none;border:none">
+                                        @Model.Book.Description
+                                </textarea>
+                                <section id="listChapter" class="content" style="width:600px;height:400px;" hidden>
+                                    @if (Model.Chapters.Count > 0)
+                                    {
+                                        foreach (var chapter in Model.Chapters)
+                                        {
+                                            if (chapter.Price > 0)
+                                            {
+                                                <i class="far fa-money-bill-alt"></i>
+                                            }<span><a asp-area="Customer" asp-controller="Read" asp-action="ReadingChapter" asp-route-id="@chapter.Id"> @chapter.Chaptername</a></span>
+                                            <br />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p style="text-align:center">Chưa có chương</p>
+                                    }
+                                </section>
+                                <section id="review" class="content" style="width:600px;height:400px;" hidden>
+                                    @if (Model.Reviews.Count > 0)
+                                    {
+                                        foreach (var review in Model.Reviews)
+                                        {
+                                            <div class="form-group row">
+                                                @for (int i = 0; i < review.Star; i++)
+                                                {
+                                                    <i class="fas fa-star" style="color:gold"></i>
+                                                }
+                                                @for (int j = review.Star; j < 5; j += 1)
+                                                {
+                                                    <i class="far fa-star" style="border:1px solid gold"></i>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p style="text-align:center">Chưa có đánh giá</p>
+                                    }
+                                </section>
+                                <section id="comment" class="content" style="width:600px;height:400px;" hidden>
+                                    <form asp-area="Customer" asp-controller="ReviewAndComment" asp-action="AddComment" method="post">
+                                        <div class="row">
+                                            <input hidden name="bookId" asp-for="@Model.Book.Id" />
+                                            <div class="row-2"><label>Bình luận:</label></div>
+                                            <div class="col-8"><input name="comment" style="height:38px;width:420px" /></div>
+                                            <div class="col-2"><button type="submit" class="btn btn-secondary"><i class="fas fa-comments"></i></button></div>
+                                        </div>
+                                    </form>
+                                    @if (Model.Comments.Count > 0)
+                                    {
+                                        foreach (var comment in Model.Comments)
+                                        {
+                                            <p>@comment.ApplicationUser.UserName: @comment.UserComment          @comment.Date</p>
+                                            <br />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p style="text-align:center">Chưa có bình luận</p>
+                                    }
+                                </section>
                             </div>
                         </div>
-                    }
-                </form>
+                    </div>
+                </div>
             </div>
-
         </div>
     </div>
-    <ul class="link">
-        <li id="tab-1" class="link-item active" onclick="ShowDescr()">Giới thiệu</li>
-        <li id="tab-2" class="link-item" onclick="ShowListChapter()">Danh sách chương</li>
-        <li id="tab-4" class="link-item" onclick="ShowReview()">Đánh giá</li>
-        <li id="tab-3" class="link-item" onclick="ShowComment()">Bình luận</li>
-    </ul>
-    <textarea id="description" class="content" readonly disabled style="width:600px;height:400px;resize:none;box-shadow:none;border:none">
-     @Model.Book.Description
-    </textarea>
-    <section id="listChapter" class="content" style="width:600px;height:400px;" hidden>
-        @if (Model.Chapters.Count > 0)
-        {
-            foreach (var chapter in Model.Chapters)
-            {
-                if (chapter.Price > 0)
-                {
-                    <i class="far fa-money-bill-alt"></i>
-                }<span><a asp-area="Customer" asp-controller="Read" asp-action="ReadingChapter" asp-route-id="@chapter.Id"> @chapter.Chaptername</a></span>
-                <br />
-            }
-        }
-        else
-        {
-            <p style="text-align:center">Chưa có chương</p>
-        }
-    </section>
-    <section id="review" class="content" style="width:600px;height:400px;" hidden>
-        @if (Model.Reviews.Count > 0)
-        {
-            foreach (var review in Model.Reviews)
-            {
-                <div class="form-group row">
-                    @for (int i = 0; i < review.Star; i++)
-                    {
-                        <i class="fas fa-star" style="color:gold"></i>
-                    }
-                    @for (int j = review.Star; j < 5; j += 1)
-                    {
-                        <i class="far fa-star" style="border:1px solid gold"></i>
-                    }
-                </div>
-            }
-        }
-        else
-        {
-            <p style="text-align:center">Chưa có đánh giá</p>
-        }
-    </section>
-    <section id="comment" class="content" style="width:600px;height:400px;" hidden>
-        <form asp-area="Customer" asp-controller="ReviewAndComment" asp-action="AddComment" method="post">
+    <div class="clearfix"> </div>
+    <footer class="site-footer">
+        <div class="container">
             <div class="row">
-                <input hidden name="bookId" asp-for="@Model.Book.Id" />
-                <div class="row-2"><label>Bình luận:</label></div>
-                <div class="col-8"><input name="comment" style="height:38px;width:420px" /></div>
-                <div class="col-2"><button type="submit" class="btn btn-secondary"><i class="fas fa-comments"></i></button></div>
-            </div>
-        </form>
-        @if (Model.Comments.Count > 0)
-        {
-            foreach (var comment in Model.Comments)
-            {
-                <p>@comment.ApplicationUser.UserName: @comment.UserComment          @comment.Date</p>
-                <br />
-            }
-        }
-        else
-        {
-            <p style="text-align:center">Chưa có bình luận</p>
-        }
-    </section>
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <h3 class="footer-heading mb-4">About Us</h3>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam blanditiis, vero voluptatum distinctio qui. Nostrum quibusdam, dolor unde sunt fugiat.</p>
+                        </div>
+                    </div>
 
-</div>
-<script>
-    function Submit() {
-        document.getElementById("DetailForm").Submit();
-    }
-    function ShowDescr() {
-        document.getElementById("description").hidden = false;
-        document.getElementById("listChapter").hidden = true;
-        document.getElementById("comment").hidden = true;
-        document.getElementById("review").hidden = true;
-        var element = document.getElementById("tab-1");
-        if (!element.classList.contains("active")) {
-            element.classList.add("active")
-        };
-        var element = document.getElementById("tab-2");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-3");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-4");
-        element.classList.remove("active");
-    }
-    function ShowListChapter() {
-        document.getElementById("description").hidden = true;
-        document.getElementById("listChapter").hidden = false;
-        document.getElementById("comment").hidden = true;
-        document.getElementById("review").hidden = true;
-        var element = document.getElementById("tab-2");
-        element.classList.add("active");
-        var element = document.getElementById("tab-1");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-3");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-4");
-        element.classList.remove("active");
-    }
-    function ShowComment() {
-        document.getElementById("description").hidden = true;
-        document.getElementById("listChapter").hidden = true;
-        document.getElementById("comment").hidden = false;
-        document.getElementById("review").hidden = true;
-        var element = document.getElementById("tab-3");
-        element.classList.add("active");
-        var element = document.getElementById("tab-1");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-2");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-4");
-        element.classList.remove("active");
-    }
-    function ShowReview() {
-        document.getElementById("description").hidden = true;
-        document.getElementById("listChapter").hidden = true;
-        document.getElementById("comment").hidden = true;
-        document.getElementById("review").hidden = false;
-        var element = document.getElementById("tab-4");
-        element.classList.add("active");
-        var element = document.getElementById("tab-1");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-3");
-        element.classList.remove("active");
-        var element = document.getElementById("tab-2");
-        element.classList.remove("active");
-    }
-</script>
+
+
+                </div>
+                <div class="col-lg-3 ml-auto">
+
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <h3 class="footer-heading mb-4">Navigation</h3>
+                        </div>
+                        <div class="col-md-6 col-lg-6">
+                            <ul class="list-unstyled">
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">Book Author</a></li>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Team</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-lg-4 mb-5 mb-lg-0" id="contact-section">
+
+                    <div class="mb-5">
+                        <h3 class="footer-heading mb-4">Quick Contact</h3>
+                        <form method="post" class="form-subscribe">
+                            <div class="form-group mb-3">
+                                <input type="text" class="form-control border-white text-white bg-transparent" placeholder="Name" aria-label="Enter Email" aria-describedby="button-addon2">
+                            </div>
+                            <div class="form-group mb-3">
+                                <input type="text" class="form-control border-white text-white bg-transparent" placeholder="Enter email" aria-label="Enter Email" aria-describedby="button-addon2">
+                            </div>
+                            <div class="form-group mb-3">
+                                <textarea name="" class="form-control" id="" cols="30" rows="4" placeholder="Your message"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary px-5" type="submit">Send Message</button>
+                            </div>
+                        </form>
+
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+            <div class="row pt-5 mt-5 text-center">
+                <div class="col-md-12">
+                    <div class="mb-4">
+                        <a href="#" class="pl-0 pr-3"><span class="icon-facebook"></span></a>
+                        <a href="#" class="pl-3 pr-3"><span class="icon-twitter"></span></a>
+                        <a href="#" class="pl-3 pr-3"><span class="icon-instagram"></span></a>
+                        <a href="#" class="pl-3 pr-3"><span class="icon-linkedin"></span></a>
+                    </div>
+                    <p>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        Copyright &copy;
+                        <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart text-danger" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+    <script>
+        function Submit() {
+            document.getElementById("DetailForm").Submit();
+        }
+        function ShowDescr() {
+            document.getElementById("description").hidden = false;
+            document.getElementById("listChapter").hidden = true;
+            document.getElementById("comment").hidden = true;
+            document.getElementById("review").hidden = true;
+            var element = document.getElementById("tab-1");
+            if (!element.classList.contains("active")) {
+                element.classList.add("active")
+            };
+            var element = document.getElementById("tab-2");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-3");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-4");
+            element.classList.remove("active");
+        }
+        function ShowListChapter() {
+            document.getElementById("description").hidden = true;
+            document.getElementById("listChapter").hidden = false;
+            document.getElementById("comment").hidden = true;
+            document.getElementById("review").hidden = true;
+            var element = document.getElementById("tab-2");
+            element.classList.add("active");
+            var element = document.getElementById("tab-1");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-3");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-4");
+            element.classList.remove("active");
+        }
+        function ShowComment() {
+            document.getElementById("description").hidden = true;
+            document.getElementById("listChapter").hidden = true;
+            document.getElementById("comment").hidden = false;
+            document.getElementById("review").hidden = true;
+            var element = document.getElementById("tab-3");
+            element.classList.add("active");
+            var element = document.getElementById("tab-1");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-2");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-4");
+            element.classList.remove("active");
+        }
+        function ShowReview() {
+            document.getElementById("description").hidden = true;
+            document.getElementById("listChapter").hidden = true;
+            document.getElementById("comment").hidden = true;
+            document.getElementById("review").hidden = false;
+            var element = document.getElementById("tab-4");
+            element.classList.add("active");
+            var element = document.getElementById("tab-1");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-3");
+            element.classList.remove("active");
+            var element = document.getElementById("tab-2");
+            element.classList.remove("active");
+        }
+    </script>
+
+    <!--//slider_owl-->
+    <!-- js -->
+    <script type="text/javascript" src="\product_detail\js\jquery-2.1.4.min.js"></script>
+    <!-- //js -->
+    <script src="\product_detail\js\modernizr.custom.js"></script>
+    <!-- Custom-JavaScript-File-Links -->
+    <!-- cart-js -->
+    <script src="\product_detail\js\minicart.min.js"></script>
+    <script>
+        // Mini Cart
+        paypal.minicart.render({
+            action: '#'
+        });
+
+        if (~window.location.search.indexOf('reset=true')) {
+            paypal.minicart.reset();
+        }
+    </script>
+
+    <!-- //cart-js -->
+    <!-- single -->
+    <script src="\product_detail\js\imagezoom.js"></script>
+    <!-- single -->
+    <!-- script for responsive tabs -->
+    <script src="\product_detail\js\easy-responsive-tabs.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#horizontalTab').easyResponsiveTabs({
+                type: 'default', //Types: default, vertical, accordion
+                width: 'auto', //auto or any width like 600px
+                fit: true,   // 100% fit in a container
+                closed: 'accordion', // Start closed if in accordion view
+                activate: function (event) { // Callback function if tab is switched
+                    var $tab = $(this);
+                    var $info = $('#tabInfo');
+                    var $name = $('span', $info);
+                    $name.text($tab.text());
+                    $info.show();
+                }
+            });
+            $('#verticalTab').easyResponsiveTabs({
+                type: 'vertical',
+                width: 'auto',
+                fit: true
+            });
+        });
+    </script>
+    <!-- FlexSlider -->
+    <script src="\product_detail\js\jquery.flexslider.js"></script>
+    <script>
+        // Can also be used with $(document).ready()
+        $(window).load(function () {
+            $('.flexslider').flexslider({
+                animation: "slide",
+                controlNav: "thumbnails"
+            });
+        });
+    </script>
+    <!-- //FlexSlider-->
+    <!-- //script for responsive tabs -->
+    <!-- start-smoth-scrolling -->
+    <script type="text/javascript" src="\product_detail\js\move-top.js"></script>
+    <script type="text/javascript" src="\product_detail\js\jquery.easing.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1000);
+            });
+        });
+    </script>
+    <!-- here stars scrolling icon -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            /*
+                var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+                };
+            */
+
+            $().UItoTop({ easingType: 'easeOutQuart' });
+            $('#detail').focus();
+        });
+    </script>
+    <!-- //here ends scrolling icon -->
+    <!-- for bootstrap working -->
+    <script type="text/javascript" src="\product_detail\js\bootstrap.js"></script>
+    <script>
+        function CalculateSummary() {
+            var price = document.getElementById("price").innerHTML;
+            var amount = document.getElementById("itemamount").value;
+            document.getElementById("summary").innerHTML = "Thành tiền: " + price * amount;
+        }
+    </script>
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/owl.carousel.min.js"></script>
+    <script src="~/js/aos.js"></script>
+    <script src="~/js/jquery.sticky.js"></script>
+    <script src="~/js/stickyfill.min.js"></script>
+    <script src="~/js/jquery.easing.1.3.js"></script>
+    <script src="~/js/isotope.pkgd.min.js"></script>
+
+    <script src="~/js/jquery.fancybox.min.js"></script>
+    <script src="~/js/main.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/70d04a055c.js" crossorigin="anonymous"></script>
+</body>
+</html>
 

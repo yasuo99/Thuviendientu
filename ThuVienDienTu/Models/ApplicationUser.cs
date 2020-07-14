@@ -40,5 +40,6 @@ namespace ThuVienDienTu.Models
         public virtual ICollection<ReportAccount> ReportAccounts { get; set; }
         public virtual ICollection<ReportAccount> ReportedAccounts { get; set; }
         public virtual ICollection<Report> Reports { get; set; }
+        public virtual ICollection<ReadingHistory> ReadingHistories { get; set; }
     }
 }

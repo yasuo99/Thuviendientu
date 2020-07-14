@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using ThuVienDienTu.Data;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
+using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Controllers
 {
@@ -48,7 +50,7 @@ namespace ThuVienDienTu.Controllers
         {
             HttpContext.Session.SetInt32("Index", 0);
             StringBuilder param = new StringBuilder();
-            param.Append("/productPage=:");
+            param.Append("Customer/Home?productPage=:");
             var books = await _db.Books.Include(u => u.Author).Include(u => u.Publisher).Where(u => u.Approved == true).ToListAsync();
             var authors = await _db.Authors.ToListAsync();
             var publishers = await _db.Publishers.ToListAsync();
@@ -112,7 +114,7 @@ namespace ThuVienDienTu.Controllers
                 }
 
             }
-            var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
+            var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id && u.Approved == true).ToListAsync();
             var reviewOfBook = await _db.Reviews.Where(u => u.BookId == id).Include(u => u.ApplicationUser).ToListAsync();
             var commentOfBook = await _db.Comments.Where(u => u.BookId == id).Include(u => u.ApplicationUser).ToListAsync();
             var authorOfBook = await _db.Authors.Where(u => u.Id == bookFromDb.AuthorId).Include(u => u.Country).FirstOrDefaultAsync();
@@ -126,6 +128,7 @@ namespace ThuVienDienTu.Controllers
         [ActionName("Details")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.READER_ROLE)]
         public async Task<IActionResult> DetailsPost(int id)
         {
             var book = await _db.Books.Where(u => u.Id == id).Include(u => u.Author).Include(u => u.Publisher).FirstOrDefaultAsync();
@@ -133,6 +136,7 @@ namespace ThuVienDienTu.Controllers
             var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
             var reviewOfBook = await _db.Reviews.Where(u => u.BookId == id).ToListAsync();
             var commentOfBook = await _db.Comments.Where(u => u.BookId == id).ToListAsync();
+            
             if (user.Balance >= book.BookPrice)
             {
                 var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();

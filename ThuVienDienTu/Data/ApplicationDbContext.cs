@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ThuVienDienTu.Models;
 
 namespace ThuVienDienTu.Data
@@ -32,6 +33,7 @@ namespace ThuVienDienTu.Data
         public DbSet<Request> Requests { get; set; }
         public DbSet<Policy> Policies { get; set; }
         public DbSet<ReportAccount> ReportAccounts { get; set; }
+        public DbSet<ReadingHistory> ReadingHitories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -54,6 +56,9 @@ namespace ThuVienDienTu.Data
                 .WithMany(b => b.Books)
                 .HasForeignKey(b => b.AuthorId)
                 .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<ReadingHistory>().HasOne(key => key.Chapter).WithMany(m => m.ReadingHistories).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ReadingHistory>().HasKey(key => new { key.ApplicationUserId, key.BookId });
+
         }
         public DbSet<ThuVienDienTu.Models.Tag> Tag { get; set; }
     } 

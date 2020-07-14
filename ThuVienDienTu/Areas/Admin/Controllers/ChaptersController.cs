@@ -89,7 +89,11 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                 chapter.EditDate = DateTime.Now;
                 chapter.ApplicationUserId = ChaptersVM.Censor.Id;
                 chapter.BookId = ChaptersVM.Book.Id;
+                chapter.Approved = false;
                 _context.Add(chapter);
+                var book = await _context.Books.Where(u => u.Id == ChaptersVM.Book.Id).FirstOrDefaultAsync();
+                var sum = book.BookPrice + chapter.Price;
+                book.BookPrice = (int)Math.Round(sum * 0.90,MidpointRounding.AwayFromZero);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Create", "Chapters", new { id = id });
             }
@@ -130,6 +134,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             {
                 try
                 {
+                    chapter.Approved = false;
                     _context.Update(chapter);
                     await _context.SaveChangesAsync();
                 }
