@@ -38,7 +38,7 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
             List<Book> books = new List<Book>();
             foreach (var chapter in chaptersPurchased)
             {
-                var book = await _db.Books.Where(u => u.Id == chapter.BookId).FirstOrDefaultAsync();
+                var book = await _db.Books.Where(u => u.Id == chapter.BookId).Include(u => u.Publisher).Include(u => u.Author).FirstOrDefaultAsync();
                 if (!books.Contains(book))
                 {
                     books.Add(book);

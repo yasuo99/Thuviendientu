@@ -78,6 +78,20 @@
     <Compile Remove="Migrations\20200526161417_init.Designer.cs" />
     <Compile Remove="Migrations\20200526161611_init.cs" />
     <Compile Remove="Migrations\20200526161611_init.Designer.cs" />
+    <Compile Remove="Migrations\20200605011533_init.cs" />
+    <Compile Remove="Migrations\20200605011533_init.Designer.cs" />
+    <Compile Remove="Migrations\20200705012016_init.cs" />
+    <Compile Remove="Migrations\20200705012016_init.Designer.cs" />
+    <Compile Remove="Migrations\20200707020037_init.cs" />
+    <Compile Remove="Migrations\20200707020037_init.Designer.cs" />
+    <Compile Remove="Migrations\20200712133442_init.cs" />
+    <Compile Remove="Migrations\20200712133442_init.Designer.cs" />
+    <Compile Remove="Migrations\20200712134800_init.cs" />
+    <Compile Remove="Migrations\20200712134800_init.Designer.cs" />
+    <Compile Remove="Migrations\20200713153244_init.cs" />
+    <Compile Remove="Migrations\20200713153244_init.Designer.cs" />
+    <Compile Remove="Migrations\20200713154022_init.cs" />
+    <Compile Remove="Migrations\20200713154022_init.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,12 +111,40 @@
 	
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="DesignPatterns\NewFolder\" />
     <Folder Include="TagHelpers\" />
     <Folder Include="wwwroot\images\default\" />
     <Folder Include="wwwroot\images\AuthorImage\" />
     <Folder Include="wwwroot\images\BookImage\" />
     <Folder Include="wwwroot\images\UserAvatar\" />
     <Folder Include="wwwroot\images\PublisherImage\" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <None Include="wwwroot\fonts\.DS_Store" />
+    <None Include="wwwroot\fonts\flaticon\font\Flaticon.svg" />
+    <None Include="wwwroot\fonts\flaticon\font\Flaticon.woff2" />
+    <None Include="wwwroot\fonts\flaticon\font\_flaticon.scss" />
+    <None Include="wwwroot\fonts\flaticon\license\license.pdf" />
+    <None Include="wwwroot\fonts\icomoon\demo-files\demo.js" />
+    <None Include="wwwroot\fonts\icomoon\fonts\icomoon.svg" />
+    <None Include="wwwroot\product_detail\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\product_detail\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\product_detail\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\product_detail\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="wwwroot\product_detail\js\bootstrap.js" />
+    <None Include="wwwroot\product_detail\js\easy-responsive-tabs.js" />
+    <None Include="wwwroot\product_detail\js\imagezoom.js" />
+    <None Include="wwwroot\product_detail\js\jquery-2.1.4.min.js" />
+    <None Include="wwwroot\product_detail\js\jquery-ui.js" />
+    <None Include="wwwroot\product_detail\js\jquery.countup.js" />
+    <None Include="wwwroot\product_detail\js\jquery.easing.min.js" />
+    <None Include="wwwroot\product_detail\js\jquery.flexslider.js" />
+    <None Include="wwwroot\product_detail\js\jquery.waypoints.min.js" />
+    <None Include="wwwroot\product_detail\js\minicart.min.js" />
+    <None Include="wwwroot\product_detail\js\modernizr.custom.js" />
+    <None Include="wwwroot\product_detail\js\move-top.js" />
+    <None Include="wwwroot\product_detail\js\responsiveslides.min.js" />
   </ItemGroup>
 
 </Project>

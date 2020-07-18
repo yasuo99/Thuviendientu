@@ -27,6 +27,10 @@ namespace ThuVienDienTu.Models
         [Display(Name = "Lượt truy cập")]
         public int Accesscount { get; set; }
         public bool Approved { get; set; }
+        [ForeignKey("Lượt thích")]
+        public int Like { get; set; }
+        [ForeignKey("Lượt dislike")]
+        public int Dislike { get; set; }
         public virtual ICollection<BookInList> BookInLists { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }

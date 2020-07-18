@@ -1,0 +1,16 @@
+﻿@model List<string>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/CMS/_CMS.cshtml";
+}
+
+<div style="text-align:center !important;height:600px;overflow:scroll">
+    <ul style="list-style-type:none">
+        @foreach (var log in Model)
+        {
+            <li>@log</li>
+        }
+    </ul>
+   
+</div>
+

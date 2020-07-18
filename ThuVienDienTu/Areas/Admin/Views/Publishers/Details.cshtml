@@ -2,41 +2,61 @@
 
 @{
     ViewData["Title"] = "Details";
+    @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
+    {
+        Layout = "~/Areas/Admin/Views/CMS/_CMS.cshtml";
+    }
 }
+<body>
 
-<h1>Details</h1>
 
-<div>
-    <h4>Publisher</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PublisherName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PublisherName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PublisherLogo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PublisherLogo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Country.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <h1 id="publisher" style="text-align:center;color:grey;margin-top:40px;font-family:Bahnschrift;font-size:30px">CHI TIẾT</h1>
+    <div class="site-section bg-light">
+        <div class="container">
+            <h4>Nhà xuất bản</h4>
+            <hr />
+            <div class="row">
+                <div class="col-lg-6">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.PublisherName)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.PublisherName)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.CountryId)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Country.CountryName)
+                        </dd>
+                    </dl>
+                    <div>
+                        <a class="btn btn-outline-secondary rounded" asp-action="Index" asp-controller="Home" asp-area="Customer">Trang chủ</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="@Model.PublisherLogo" width="300" height="400" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
+    {
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    }
+    <script>
+        document.getElementById('publisher').scrollIntoView(true);
+    </script>
+</body>

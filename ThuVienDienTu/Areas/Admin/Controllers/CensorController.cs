@@ -13,7 +13,7 @@ using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
-    [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.CENSOR_ROLE)]
+    //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.CENSOR_ROLE)]
     [Area("Admin")]
     public class CensorController : Controller
     {
@@ -35,7 +35,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         {
             StringBuilder param = new StringBuilder();
             param.Append("/Admin/Censor?productPage=:");
-            var bookOnQueue = await _db.Books.Where(u => u.Approved == false).ToListAsync();
+            var bookOnQueue = await _db.Books.ToListAsync();
             var count = bookOnQueue.Count;
             bookOnQueue.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
             BooksVM.Books = bookOnQueue;
@@ -52,23 +52,35 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         {
             var book = await _db.Books.Where(u => u.Id == id).Include(a => a.Author).Include(b => b.Publisher).FirstOrDefaultAsync();
             var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
-            BooksVM.Book = book;
-            BooksVM.Chapters = chapterOfBook;
-            return View(BooksVM);
+            book.Chapters = chapterOfBook;
+            return View(book);
 
         }
-        public async Task<IActionResult> Approve(int id)
+        public async Task<IActionResult> ChapterApprove(int id)
         {
-            var book = _db.Books.Where(u => u.Id == id).FirstOrDefault();
-            book.Approved = true;
-            _db.Books.Update(book);
+            var chapter = await  _db.Chapters.Where(u => u.Id == id).FirstOrDefaultAsync();
+            chapter.Approved = true;
             await _db.SaveChangesAsync();
             return RedirectToAction("Index", new { productPage = 1 });
         }
-        public async Task<IActionResult> Decline(int id)
+        public async Task<IActionResult> ChapterDecline(int id)
         {
-            var book = _db.Books.Where(u => u.Id == id).FirstOrDefault();
-            _db.Books.Remove(book);
+            var chapter = await _db.Chapters.Where(u => u.Id == id).FirstOrDefaultAsync();
+            chapter.Approved = true;
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Index", new { productPage = 1 });
+        }
+        public async Task<IActionResult> Publish(int id)
+        {
+            var book = await _db.Books.Where(u => u.Id == id).FirstOrDefaultAsync();
+            if(book.Approved)
+            {
+                book.Approved = false;
+            }
+            else
+            {
+                book.Approved = true;
+            }
             await _db.SaveChangesAsync();
             return RedirectToAction("Index", new { productPage = 1 });
         }

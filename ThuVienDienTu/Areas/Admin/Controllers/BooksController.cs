@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThuVienDienTu.Data;
@@ -16,8 +17,8 @@ using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
-    [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
     [Area("Admin")]
+    [AllowAnonymous]
     public class BooksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -38,8 +39,10 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Books
-        public async Task<IActionResult> Index(int productPage = 1)
+        public async Task<IActionResult> Index(int productPage = 1,string q = null)
         {
+            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Signed");
+            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "PublisherName");
             StringBuilder param = new StringBuilder();
             param.Append("/Admin/Books?productPage=:");
             var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).ToListAsync();
@@ -53,6 +56,14 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                 urlParam = param.ToString()
             };
             BooksVM.Books = books;
+            if (q == "Selling")
+            {
+                BooksVM.Books = books.Where(u => u.Approved == true).ToList();
+            }
+            if(q == "Waiting")
+            {
+                BooksVM.Books = books.Where(u => u.Approved == false).ToList();
+            }
             return View(BooksVM);
         }
         // GET: Admin/Books/Details/5
@@ -71,10 +82,9 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
-            return View(book);
+            BooksVM.Book = book;
+            return View(BooksVM);
         }
-        //[Authorize(Roles = SD.LIBRARIAN_ROLE)]
         // GET: Admin/Books/Create
         public IActionResult Create()
         {
@@ -107,7 +117,6 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         // POST: Admin/Books/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[Authorize(Roles =SD.LIBRARIAN_ROLE)]
         [HttpPost, ActionName("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePOST()
@@ -117,7 +126,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                 var book = BooksVM.Book;
                 if (SameBookExist(book))
                 {
-                    ViewBag.SameBook = "Sách đã có trong hệ thống";
+                    ModelState.AddModelError("SameBook", "Sách đã có trong hệ thống");
                     ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Signed", BooksVM.Book.AuthorId);
                     ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "PublisherName", BooksVM.Book.PublisherId);
                     return View(BooksVM);
@@ -173,16 +182,19 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     System.IO.File.Copy(uploads, webRootPath + @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + ".png");
                     bookFromDb.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + ".png";
                 }
-                foreach (var genresView in BooksVM.GenresViewModels)
+                if(BooksVM.GenresViewModels != null)
                 {
-                    if (genresView.Selected)
+                    foreach (var genresView in BooksVM.GenresViewModels)
                     {
-                        BookGenres bookGenres = new BookGenres()
+                        if (genresView.Selected)
                         {
-                            BookId = bookFromDb.Id,
-                            GenresId = genresView.Genres.Id
-                        };
-                        _context.BookGenres.Add(bookGenres);
+                            BookGenres bookGenres = new BookGenres()
+                            {
+                                BookId = bookFromDb.Id,
+                                GenresId = genresView.Genres.Id
+                            };
+                            _context.BookGenres.Add(bookGenres);
+                        }
                     }
                 }
                 bookFromDb.Approved = false;
@@ -193,7 +205,6 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Id", BooksVM.Book.PublisherId);
             return View(BooksVM.Book);
         }
-        //[Authorize(Roles = SD.LIBRARIAN_ROLE)]
         // GET: Admin/Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -280,26 +291,6 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                foreach (var genr in BooksVM.GenresViewModels)
-                {
-                    BookGenres bookGenres = new BookGenres()
-                    {
-                        BookId = BooksVM.Book.Id,
-                        GenresId = genr.Genres.Id
-                    };
-                    if (genr.Selected)
-                    {
-                        _context.BookGenres.Add(bookGenres);
-                    }
-                    else
-                    {
-                        var genresOfBook = await _context.BookGenres.Where(u => u.BookId == BooksVM.Book.Id && u.GenresId == genr.Genres.Id).FirstOrDefaultAsync();
-                        if(genresOfBook != null)
-                        {   
-                            _context.BookGenres.Remove(genresOfBook);
-                        }
-                    }
-                }
                 _context.Update(BooksVM.Book);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -328,13 +319,13 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
 
             return View(book);
         }
-        [Authorize(Roles = SD.LIBRARIAN_ROLE)]
+     //   [Authorize(Roles = SD.LIBRARIAN_ROLE + "," + SD.ADMIN_ROLE)]
         // POST: Admin/Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int bookid)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Books.FindAsync(bookid);
             if (book.BookImage != null)
             {
                 var webRootPath = _hostEnvironment.WebRootPath;

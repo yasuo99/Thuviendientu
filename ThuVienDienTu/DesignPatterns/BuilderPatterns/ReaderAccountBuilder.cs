@@ -48,6 +48,9 @@ namespace ThuVienDienTu.DesignPatterns.BuilderPatterns
             userAccount.Balance = 0;
             userAccount.EmailConfirmed = true;
         }
+        public void BuildDate() {
+            userAccount.Date = DateTime.Now;
+             }
         public ApplicationUser GetAccount()
         {
             return userAccount;

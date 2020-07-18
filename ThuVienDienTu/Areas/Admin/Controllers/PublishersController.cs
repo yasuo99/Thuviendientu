@@ -28,9 +28,10 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Publishers
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         public async Task<IActionResult> Index()
         {
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "CountryName");
             var applicationDbContext = _context.Publishers.Include(p => p.Country);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -55,7 +56,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Publishers/Create
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         public IActionResult Create()
         {
             var countriesFromDb = _context.Countries.ToList();
@@ -70,11 +71,17 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         // POST: Admin/Publishers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         [HttpPost,ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePOST([Bind("Id,PublisherName,PublisherLogo,Description,CountryId")] Publisher publisher)
+        public async Task<IActionResult> CreatePOST(string publisherName, string description, int countryId)
         {
+            Publisher publisher = new Publisher()
+            {
+                PublisherName = publisherName,
+                Description = description,
+                CountryId = countryId
+            };
             if (ModelState.IsValid)
             {
                 _context.Add(publisher);
@@ -105,7 +112,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Publishers/Edit/5
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -125,7 +132,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         // POST: Admin/Publishers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,PublisherName,PublisherLogo,Description,CountryId")] Publisher publisher)
@@ -177,7 +184,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Publishers/Delete/5
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -197,12 +204,12 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // POST: Admin/Publishers/Delete/5
-        [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+        //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int publisherid)
         {
-            var publisher = await _context.Publishers.FindAsync(id);
+            var publisher = await _context.Publishers.FindAsync(publisherid);
             if(publisher.PublisherLogo != null)
             {
                 var webRootPath = _hostEnvironment.WebRootPath;

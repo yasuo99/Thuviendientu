@@ -2,47 +2,60 @@
 
 @{
     ViewData["Title"] = "Details";
+    @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
+    {
+        Layout = "~/Areas/Admin/Views/CMS/_CMS.cshtml";
+    }
 }
+<body>
 
-<h1>Details</h1>
+    <h1 id="author" style="text-align:center;color:grey;margin-top:40px;font-family:Bahnschrift;font-size:30px">CHI TIẾT</h1>
+    <div class="site-section bg-light">
+        <div class="container">
+            <h4>Tác giả</h4>
+            <hr />
+            <div class="row">
+                <div class="col-lg-6">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.FullName)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.FullName)
+                        </dd>
 
-<div>
-    <h4>Author</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Avatar)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Avatar)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FullName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FullName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Signed)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Signed)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Country.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.CountryId)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Country.CountryName)
+                        </dd>
+                    </dl>
+                    <div>
+                        <a class="btn btn-outline-secondary rounded" asp-action="Index" asp-controller="Home" asp-area="Customer">Trang chủ</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="@Model.Avatar" width="300" height="400" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
+    {
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    }
+    <script>
+        document.getElementById('author').scrollIntoView(true);
+    </script>
+</body>

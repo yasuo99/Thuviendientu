@@ -2,81 +2,192 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/CMS/_CMS.cshtml";
 }
 
 <br />
 <br />
-<div class="row">
-    <div class="col-6">
-        <h2 class="text-info"> Danh sách cuốn sách</h2>
+<body>
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info"> Danh sách cuốn sách</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a href="#addBookModal" data-toggle="modal" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm sách</a>
+        </div>
     </div>
-    <div class="col-6 text-right">
-        <a asp-area="Admin" asp-controller="Books" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm sách</a>
+    <div class="text-danger">@Html.ValidationMessage("SameBook")</div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.BookName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.BookImage)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.BookPrice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Author)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Publisher)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Book.Accesscount)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Books)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookName)
+                    </td>
+                    <td>
+                        <img src="@item.BookImage" alt="ảnh bìa sách" width="300" height="300" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author.Signed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Publisher.PublisherName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Accesscount)
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a type="button" class="btn btn-primary" asp-action="Create" asp-controller="Chapters" asp-route-id="@item.Id"><i class="far fa-plus-square"></i></a>
+                            <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Books" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                            <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Books" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                            <a id="@item.Id" href="#deleteBookModal" data-toggle="modal" type="button" onclick="DeleteUser(this.id)" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
+         page-class="btn border" page-class-normal="btn btn-default active"
+         page-class-selected="btn btn-primary active" class="btn-group m-1"></div>
+    <div id="addBookModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Create" enctype="multipart/form-data" method="post">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Employee</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="p-4 border rounded">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label asp-for="Book.BookName" class="control-label"></label>
+                                </div>
+                                <div class="col-6">
+                                    <input asp-for="Book.BookName" class="form-control" />
+                                    <span asp-validation-for="Book.BookName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label asp-for="Book.BookImage" class="control-label"></label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="file" name="files" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label asp-for="Book.Description" class="control-label"></label>
+                                </div>
+                                <div class="col-6">
+                                    <input asp-for="Book.Description" class="form-control" />
+                                    <span asp-validation-for="Book.Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label asp-for="Book.Author" class="control-label"></label>
+                                </div>
+                                <div class="col-6">
+                                    <select asp-for="Book.AuthorId" class="form-control" asp-items="ViewBag.AuthorId"></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label asp-for="Book.Publisher" class="control-label"></label>
+                                </div>
+                                <div class="col-6">
+                                    <select asp-for="Book.PublisherId" class="form-control" asp-items="ViewBag.PublisherId"></select>
+                                </div>
+                            </div>
+                            <fieldset class="border border-light">
+                                <legend>Thể loại</legend>
+                                @if (Model.GenresViewModels.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.GenresViewModels.Count; i++)
+                                    {
+                                        <div class="row">
+                                            <label class="col-3 control-label">@Model.GenresViewModels[i].Genres.GenresName</label>
+                                            <input type="hidden" asp-for="@Model.GenresViewModels[i].Genres.Id" />
+                                            <input class="col-6 form-control" type="checkbox" asp-for="@Model.GenresViewModels[i].Selected" />
+                                        </div>
+                                    }
+                                }
+                            </fieldset>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label>Thẻ tag</label>
+                                </div>
+                                <div class="col-6">
+                                    <input class="form-control" asp-for="@Model.BareTag" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-success" value="Thêm sách">
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.BookName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.BookImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.BookPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.Publisher)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book.Accesscount)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Books) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookName)
-            </td>
-            <td>
-                <img src="@item.BookImage" alt="ảnh bìa sách" width="300" height="300"/>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Accesscount)
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a type="button" class="btn btn-primary" asp-action="Create" asp-controller="Chapters" asp-route-id="@item.Id"><i class="far fa-plus-square"></i></a>
-                    <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Books" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
-                    <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Books" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
-                    <a type="button" class="btn btn-danger" asp-action="Delete" asp-controller="Books" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
-                </div>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-<div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
-     page-class="btn border" page-class-normal="btn btn-default active"
-     page-class-selected="btn btn-primary active" class="btn-group m-1"></div>
+    <!-- Delete Modal HTML -->
+    <div id="deleteBookModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Delete" method="post">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Xoá sách</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bạn có chắc muốn xoá sách này </p>
+                        <p class="text-warning"><small>Không thể hoàn tác.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Trở về">
+                        <input type="hidden" name="bookid" id="bookid" />
+                        <input type="submit" class="btn btn-danger" value="Xoá">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function DeleteUser(id) {
+            document.getElementById("bookid").value = id;
+        }
+    </script>
+</body>

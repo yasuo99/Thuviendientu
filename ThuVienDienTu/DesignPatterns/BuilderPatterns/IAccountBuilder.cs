@@ -9,6 +9,7 @@ namespace ThuVienDienTu.DesignPatterns.BuilderPatterns
     public interface IAccountBuilder
     {
         void BuildInfor();
+        void BuildDate();
         Task BuildAccount();
         ApplicationUser GetAccount();
     }

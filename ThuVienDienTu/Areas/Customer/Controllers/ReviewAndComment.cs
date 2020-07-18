@@ -41,5 +41,22 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction("Details", "Home", new { area = "Customer", id = bookId });
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.READER_ROLE)]
+        public async Task<IActionResult> AddReview(int bookId, int star, string userReview)
+        {
+            var user = await _db.ApplicationUsers.Where(u => u.Email == User.Identity.Name).FirstOrDefaultAsync();
+            Review review = new Review()
+            {
+                BookId = bookId,
+                Star = star,
+                UserReview = userReview,
+                ApplicationUserId = user.Id
+            };
+            _db.Add(review);
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Index", "Books", new { area = "Customer" });
+        }
     }
 }

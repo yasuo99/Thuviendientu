@@ -3,18 +3,84 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="row" style="width:100%">
-    @foreach (var book in Model.Books)
+<div class="site-section bg-light" id="products-section">
+    @if (Model.ApplicationUser != null)
     {
-
-        <div class="col-2 item-card">
-            <a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@book.Id">
-                <img src="@book.BookImage" style="position:center;width:180px;height:200px;display:block" />
-                <p class="item-label">@book.BookName</p>
-            </a>
+        <div class="container">
+            <div class="fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5>Đăng ký nhanh tài khoản</h5>
+                            <button type="button" class="close float-right" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>amen</p>
+                            <input id="confirmPolicy" type="checkbox" onchange="EnableRegister()" /> <span>Tôi đã đọc và xác nhận tuân theo điều khoản</span>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="registerButton" type="submit" class="btn btn-primary align-self-center" disabled>Đăng ký</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     }
+    <div class="container">
+        @*<div class="row mb-5">
+                <div class="col-md-7">
+                    <h2 class="heading">Features Of This Book</h2>
+                </div>
+            </div>*@
+        <div class="row">
+            @foreach (var book in Model.Books)
+            {
+
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="service h-100">
+                        <div class="card">
+                            <a asp-action="Details" asp-route-id="@book.Id" title="@book.BookName">
+                                <div class="card-body">
+                                    <img class="card-img" src="@book.BookImage" width="300" height="300" />
+                                </div>
+                            </a>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-secondary">@book.BookPrice</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+        </div>
+    </div>
+    <div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
+         page-class="btn border" page-class-normal="btn btn-default active"
+         page-class-selected="btn btn-primary active" class="btn-group m-1"></div>
 </div>
-<div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
-     page-class="btn border" page-class-normal="btn btn-default active"
-     page-class-selected="btn btn-primary active" class="btn-group m-1"></div>
+
+<div class="site-section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-7">
+                <h2 class="heading">Book Screenshot</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos, harum repudiandae provident neque voluptas odio nostrum officiis debitis et vitae, dolorem placeat fugiat recusandae aperiam aspernatur expedita alias, officia. Suscipit!</p>
+                <p class="mb-3">
+                    <a href="#" class="customNextBtn">Prev</a>
+                    <span class="mx-2">/</span>
+                    <a href="#" class="customPrevBtn">Next</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="owl-carousel slide-one-item">
+            @foreach (var book in Model.Books)
+            {
+                <img src="@book.BookImage" alt="Image" class="img-fluid" style="width:250px;height:300px">
+            }
+        </div>
+    </div>
+</div>
+

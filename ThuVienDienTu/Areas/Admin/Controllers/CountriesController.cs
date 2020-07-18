@@ -16,7 +16,7 @@ using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
-    [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
+  //  [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
     [Area("Admin")]
     public class CountriesController : Controller
     {
@@ -153,9 +153,9 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         // POST: Admin/Countries/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int countryid)
         {
-            var country = await UnitOfWork.Countries.GetById(id);
+            var country = await UnitOfWork.Countries.GetById(countryid);
             await UnitOfWork.Countries.Delete(country);
             UnitOfWork.Commit();
             return RedirectToAction(nameof(Index));

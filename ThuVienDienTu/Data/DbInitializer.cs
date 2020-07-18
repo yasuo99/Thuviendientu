@@ -45,8 +45,8 @@ namespace ThuVienDienTu.Data
                 Date = DateTime.Now,
                 EmailConfirmed = true,
             }, "Thanhpro1@").GetAwaiter().GetResult();
-            ApplicationUser usertodo = await _db.ApplicationUsers.Where(u => u.Email == "yasuo120999@gmail.com").FirstOrDefaultAsync();
-            await _userManager.AddToRoleAsync(usertodo, SD.ADMIN_ROLE);
+            ApplicationUser usertodo = _db.ApplicationUsers.Where(u => u.Email == "yasuo120999@gmail.com").FirstOrDefault();
+            _userManager.AddToRoleAsync(usertodo, SD.ADMIN_ROLE).GetAwaiter().GetResult();
         }
 
 

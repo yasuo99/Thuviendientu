@@ -278,6 +278,12 @@ namespace ThuVienDienTu.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Dislike")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Like")
+                        .HasColumnType("int");
+
                     b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
@@ -344,6 +350,9 @@ namespace ThuVienDienTu.Migrations
 
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Approved")
+                        .HasColumnType("bit");
 
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -494,6 +503,26 @@ namespace ThuVienDienTu.Migrations
                     b.HasIndex("ChapterId");
 
                     b.ToTable("Purchaseds");
+                });
+
+            modelBuilder.Entity("ThuVienDienTu.Models.ReadingHistory", b =>
+                {
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChapterId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationUserId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("ChapterId");
+
+                    b.ToTable("ReadingHitories");
                 });
 
             modelBuilder.Entity("ThuVienDienTu.Models.ReadingList", b =>
@@ -861,10 +890,31 @@ namespace ThuVienDienTu.Migrations
                         .WithMany("Purchases")
                         .HasForeignKey("ApplicationUserId");
 
-                    b.HasOne("ThuVienDienTu.Models.Chapter", "Book")
+                    b.HasOne("ThuVienDienTu.Models.Chapter", "Chapter")
                         .WithMany("Purchases")
                         .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ThuVienDienTu.Models.ReadingHistory", b =>
+                {
+                    b.HasOne("ThuVienDienTu.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("ReadingHistories")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ThuVienDienTu.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ThuVienDienTu.Models.Chapter", "Chapter")
+                        .WithMany("ReadingHistories")
+                        .HasForeignKey("ChapterId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 

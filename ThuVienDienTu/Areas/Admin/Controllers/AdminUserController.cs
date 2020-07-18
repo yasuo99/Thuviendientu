@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using ThuVienDienTu.Data;
+using ThuVienDienTu.DesignPatterns.SingletonPatterns;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
 using ThuVienDienTu.Utility;
@@ -22,6 +25,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
     {
 
         private readonly ApplicationDbContext _db;
+        private ISingleton _iSingleTon;
         private int PageSize = 10;
         public IWebHostEnvironment _hostEnvironment { get; set; }
         [BindProperty]
@@ -34,80 +38,116 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             {
                 ApplicationUser = new ApplicationUser()
             };
+            _iSingleTon = Singleton.GetInstance;
         }
-        public IActionResult Index(int productPage = 1)
+        public async Task<IActionResult> Index(int productPage = 1, string q = null, string userId = null)
         {
-            ApplicationUserViewModel ApplicationUserVM = new ApplicationUserViewModel()
+            try
             {
-                ApplicationUsers = new List<Models.ApplicationUser>()
-            };
-            StringBuilder param = new StringBuilder();
+                ApplicationUserViewModel ApplicationUserVM = new ApplicationUserViewModel()
+                {
+                    ApplicationUsers = new List<Models.ApplicationUser>()
+                };
+                StringBuilder param = new StringBuilder();
 
-            param.Append("/Admin/AdminUser?productPage=:");
-            ApplicationUserVM.ApplicationUsers = _db.ApplicationUsers.Where(u => u.Email != User.Identity.Name).ToList();
+                param.Append("/Admin/AdminUser?productPage=:");
+                ApplicationUserVM.ApplicationUsers = _db.ApplicationUsers.Where(u => u.Email != User.Identity.Name).ToList();
 
-            var count = ApplicationUserVM.ApplicationUsers.Count;
-            ApplicationUserVM.ApplicationUsers = ApplicationUserVM.ApplicationUsers.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
-            ApplicationUserVM.PagingInfo = new PagingInfo
+                var count = ApplicationUserVM.ApplicationUsers.Count;
+                ApplicationUserVM.ApplicationUsers = ApplicationUserVM.ApplicationUsers.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
+                ApplicationUserVM.PagingInfo = new PagingInfo
+                {
+                    CurrentPage = productPage,
+                    ItemsPerPage = PageSize,
+                    TotalItems = count,
+                    urlParam = param.ToString()
+                };
+                if (q == "Active")
+                {
+                    ApplicationUserVM.ApplicationUsers = ApplicationUserVM.ApplicationUsers.Where(u => u.LockoutEnd.HasValue == false).ToList();
+                }
+                if (q == "Deactive")
+                {
+                    ApplicationUserVM.ApplicationUsers = ApplicationUserVM.ApplicationUsers.Where(u => u.LockoutEnd.HasValue == true).ToList();
+                }
+                if (userId != null)
+                {
+                    ApplicationUserVM.ApplicationUser = await _db.ApplicationUsers.Where(u => u.Id == userId).FirstOrDefaultAsync();
+                }
+                return View(ApplicationUserVM);
+            }
+            catch (Exception e)
             {
-                CurrentPage = productPage,
-                ItemsPerPage = PageSize,
-                TotalItems = count,
-                urlParam = param.ToString()
-            };
-
-            return View(ApplicationUserVM);
+                _iSingleTon.LogException(e.Message);
+                throw;
+            }
         }
 
         //Get Edit
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || id.Trim().Length == 0)
+            try
             {
-                return NotFound();
+                if (id == null || id.Trim().Length == 0)
+                {
+                    return NotFound();
+                }
+                var userFromDb = await _db.ApplicationUsers.FindAsync(id);
+
+                if (userFromDb == null)
+                {
+                    return NotFound();
+                }
+                UserVM.ApplicationUser = userFromDb;
+                return View(UserVM);
             }
-
-            var userFromDb = await _db.ApplicationUsers.FindAsync(id);
-
-            if (userFromDb == null)
+            catch (Exception e)
             {
-                return NotFound();
-            }          
-            UserVM.ApplicationUser = userFromDb;          
-            return View(UserVM);
+                _iSingleTon.LogException(e.Message);
+                throw;
+            }
+           
         }
-
 
         //Post Edit
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(string id)
         {
-            if (ModelState.IsValid)
+            try
             {
-                ApplicationUser userFromDb = _db.ApplicationUsers.Where(u => u.Id == id).FirstOrDefault();
-                userFromDb.DisplayName = UserVM.ApplicationUser.DisplayName;
-                userFromDb.PhoneNumber = UserVM.ApplicationUser.PhoneNumber;
-                userFromDb.Address = UserVM.ApplicationUser.Address;
-                var webRootPath = _hostEnvironment.WebRootPath;
-                var files = HttpContext.Request.Form.Files;
-                if (files != null)
+                if (ModelState.IsValid)
                 {
-                    if(userFromDb.UserAvatar != null)
+                    ApplicationUser userFromDb = _db.ApplicationUsers.Where(u => u.Id == id).FirstOrDefault();
+                    userFromDb.DisplayName = UserVM.ApplicationUser.DisplayName;
+                    userFromDb.PhoneNumber = UserVM.ApplicationUser.PhoneNumber;
+                    userFromDb.Address = UserVM.ApplicationUser.Address;
+                    var webRootPath = _hostEnvironment.WebRootPath;
+                    var files = HttpContext.Request.Form.Files;
+                    if (files != null)
                     {
-                        var oldPath = webRootPath + @"" + userFromDb.UserAvatar;
-                        System.IO.File.Delete(oldPath);
+                        if (userFromDb.UserAvatar != null)
+                        {
+                            var oldPath = webRootPath + @"" + userFromDb.UserAvatar;
+                            System.IO.File.Delete(oldPath);
+                        }
+                        var path = Path.Combine(webRootPath, SD.UserAvatar);
+                        var extension = Path.GetExtension(files[0].FileName);
+                        using (var fileStream = new FileStream(Path.Combine(path, id + extension), FileMode.Create))
+                        {
+                            files[0].CopyTo(fileStream);
+                        }
+                        userFromDb.UserAvatar = @"\" + SD.UserAvatar + @"\" + id + extension;
                     }
-                    var path = Path.Combine(webRootPath, SD.UserAvatar);
-                    var extension = Path.GetExtension(files[0].FileName);
-                    using(var fileStream = new FileStream(Path.Combine(path,id + extension),FileMode.Create))
-                    {
-                        files[0].CopyTo(fileStream);
-                    }
-                    userFromDb.UserAvatar = @"\" + SD.UserAvatar + @"\" + id + extension;
                 }
-            } 
-            return View();
+                return View();
+            }
+            catch (Exception e)
+            {
+                _iSingleTon.LogException(e.Message);
+                throw;
+            }
+           
         }
 
 
@@ -134,11 +174,39 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePOST(string id)
         {
-            ApplicationUser userFromDb = _db.ApplicationUsers.Where(u => u.Id == id).FirstOrDefault();
-            userFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
+            try
+            {
+                ApplicationUser userFromDb = _db.ApplicationUsers.Where(u => u.Id == id).FirstOrDefault();
+                userFromDb.LockoutEnd = DateTime.Now.AddYears(1000);
 
-            _db.SaveChanges();
-            return RedirectToAction(nameof(Index));
+                _db.SaveChanges();
+                _iSingleTon.LogException("Khóa tài khoản email: " + userFromDb.Email);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception e)
+            {
+                _iSingleTon.LogException(e.Message);
+                return RedirectToAction("Error", "Log", new { area = "Admin" });
+            }
+            
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteForever(string id)
+        {
+            try
+            {
+                var user = await _db.ApplicationUsers.Where(u => u.Id == id).FirstOrDefaultAsync();
+                _db.Remove(user);
+                await _db.SaveChangesAsync();
+                _iSingleTon.LogException("Xóa tài khoản email: " + user.Email);
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                _iSingleTon.LogException(e.Message);
+                return RedirectToAction("Error", "Log",new {area = "Admin"});
+            }  
         }
     }
 }

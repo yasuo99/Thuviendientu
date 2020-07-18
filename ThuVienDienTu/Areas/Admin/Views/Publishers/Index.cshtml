@@ -2,60 +2,138 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/CMS/_CMS.cshtml";
 }
 
 <br />
 <br />
-<div class="row">
-    <div class="col-6">
-        <h2 class="text-info"> Danh sách NXB</h2>
+<body>
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-info"> Danh sách NXB</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a href="#addPublisherModal" data-toggle="modal" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm NXB</a>
+        </div>
     </div>
-    <div class="col-6 text-right">
-        <a asp-area="Admin" asp-controller="Publishers" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm NXB</a>
-    </div>
-</div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PublisherName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PublisherLogo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Country)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PublisherName)
-                </td>
-                <td>
-                    <img src="@item.PublisherLogo" width="300" height="300" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Country.Id)
-                </td>
-                <td>
-                    <div class="btn-group">
-                        <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Publishers" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
-                        <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Publishers" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
-                        <a type="button" class="btn btn-danger" asp-action="Delete" asp-controller="Pubishers" asp-route-id="@item.Id"><i class="fas fa-trash-alt"></i></a>
-                    </div>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.PublisherName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PublisherLogo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Country)
+                </th>
+                <th></th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PublisherName)
+                    </td>
+                    <td>
+                        <img src="@item.PublisherLogo" width="300" height="300" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Country.Id)
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a type="button" class="btn btn-success" asp-action="Edit" asp-controller="Publishers" asp-route-id="@item.Id"><i class="fas fa-edit"></i></a>
+                            <a type="button" class="btn btn-info" asp-action="Details" asp-controller="Publishers" asp-route-id="@item.Id"><i class="far fa-list-alt"></i></a>
+                            <a id="@item.Id" href="#deletePublisherModal" class="btn btn-danger" onclick="DeleteUser(this.id)" data-toggle="modal"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div id="addPublisherModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Thêm NXB</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="p-4 border rounded">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                    <input name="publisherName" placeholder="Tên NXB" class="form-control" />
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label class="control-label">Logo NXB</label>
+                                </div>
+                                <div class="col-6">
+                                    <input class="form-control" type="file" name="files" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-6">
+                                    <input placeholder="Mô tả NXB" name="description" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-3">
+                                    <label class="control-label">Quốc gia</label>
+                                </div>
+                                <div class="col-6">
+                                    <select name="countryId" class="form-control" asp-items="ViewBag.CountryId"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-success" value="Thêm NXB">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Modal HTML -->
+    <div id="deletePublisherModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Delete" method="post">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Xoá NXB</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bạn có chắc muốn xoá NXB này </p>
+                        <p class="text-warning"><small>Không thể hoàn tác.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Trở về">
+                        <input type="hidden" name="publisherid" id="publisherid" />
+                        <input type="submit" class="btn btn-danger" value="Xoá">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function DeleteUser(id) {
+            document.getElementById("publisherid").value = id;
         }
-    </tbody>
-</table>
+    </script>
+
+
+</body>

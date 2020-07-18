@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThuVienDienTu.Data;
+using ThuVienDienTu.DesignPatterns.SingletonPatterns;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
 
@@ -15,6 +16,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
     public class ChaptersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private ISingleton _iSingleton;
         private int PageSize = 10;
         [BindProperty]
         public BooksViewModel BooksVM { get; set; }
@@ -34,6 +36,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             {
                 Chapter = new Chapter()
             };
+            _iSingleton = Singleton.GetInstance;
         }
 
         // GET: Admin/Chapters
@@ -67,6 +70,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         //Tạo chương mới cho sách
         public IActionResult Create(int? id)
         {
+            
             var bookFromDb = _context.Books.Where(u => u.Id == id).FirstOrDefault(); //Lấy ra cuốn sách để thêm chương
             ChaptersVM.Book = bookFromDb;
             var userFromDb = _context.ApplicationUsers.Where(u => u.Email == User.Identity.Name).FirstOrDefault(); //Lấy ra user đang làm thao tác thêm chương
@@ -83,17 +87,32 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int id)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var chapter = ChaptersVM.Chapter;
-                chapter.EditDate = DateTime.Now;
-                chapter.ApplicationUserId = ChaptersVM.Censor.Id;
-                chapter.BookId = ChaptersVM.Book.Id;
-                _context.Add(chapter);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Create", "Chapters", new { id = id });
+                if (ModelState.IsValid)
+                {
+                    var chapter = ChaptersVM.Chapter;
+                    chapter.EditDate = DateTime.Now;
+                    chapter.ApplicationUserId = ChaptersVM.Censor.Id;
+                    chapter.BookId = ChaptersVM.Book.Id;
+                    chapter.Approved = false;
+                    _context.Add(chapter);
+                    var book = await _context.Books.Where(u => u.Id == ChaptersVM.Book.Id).FirstOrDefaultAsync();
+                    var sum = book.BookPrice + chapter.Price;
+                    book.BookPrice = (int)Math.Round(sum * 0.90, MidpointRounding.AwayFromZero);
+                    await _context.SaveChangesAsync();
+                    _iSingleton.LogException("Thêm chương mới của sách Id: " + book.Id);
+                    return RedirectToAction("Create", "Chapters", new { id = id });
+                }
+                return RedirectToAction("Index");
             }
-            return View(ChaptersVM);
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }
+           
+            
         }
 
         // GET: Admin/Chapters/Edit/5
@@ -130,10 +149,11 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             {
                 try
                 {
+                    chapter.Approved = false;
                     _context.Update(chapter);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!ChapterExists(chapter.Id))
                     {
@@ -141,7 +161,8 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     }
                     else
                     {
-                        throw;
+                        _iSingleton.LogException(e.Message);
+                        return RedirectToAction("Error", "Log");
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -166,7 +187,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     _context.Update(chapter);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!ChapterExists(BooksVM.Chapter.Id))
                     {
@@ -174,7 +195,8 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     }
                     else
                     {
-                        throw;
+                        _iSingleton.LogException(e.Message);
+                        return RedirectToAction("Error", "Log");
                     }
                 }
                 return RedirectToAction("Index", "Read", new { area = "Customer", id = BooksVM.Chapter.BookId });
@@ -206,6 +228,15 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }
             var chapter = await _context.Chapters.FindAsync(id);
             _context.Chapters.Remove(chapter);
             await _context.SaveChangesAsync();

@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using ThuVienDienTu.Data;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
+using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Controllers
 {
@@ -41,22 +43,21 @@ namespace ThuVienDienTu.Controllers
                 Comments = new List<Comment>(),
                 ReadingListsVM = new List<ReadingListViewModel>(),
                 Error = null,
-                AlreadyBought = false
+                AlreadyBought = 0
             };
         }
         public async Task<IActionResult> Index(int productPage = 1, string timkiem = null)
         {
-            HttpContext.Session.SetInt32("Index", 0);
             StringBuilder param = new StringBuilder();
-            param.Append("/productPage=:");
+            param.Append("Customer/Home?productPage=:");
             var books = await _db.Books.Include(u => u.Author).Include(u => u.Publisher).Where(u => u.Approved == true).ToListAsync();
             var authors = await _db.Authors.ToListAsync();
             var publishers = await _db.Publishers.ToListAsync();
             var countries = await _db.Countries.ToListAsync();
             if (timkiem != null)
             {
-                books.Where(u => u.BookName.ToLower().Contains(timkiem.ToLower()) || u.Publisher.PublisherName.ToLower().Contains(timkiem.ToLower())
-                || u.Author.Signed.ToLower().Contains(timkiem.ToLower()) || u.Author.FullName.ToLower().Contains(timkiem.ToLower()));
+                books = books.Where(u => u.BookName.ToLower().Contains(timkiem.ToLower()) || u.Publisher.PublisherName.ToLower().Contains(timkiem.ToLower())
+                || u.Author.Signed.ToLower().Contains(timkiem.ToLower()) || u.Author.FullName.ToLower().Contains(timkiem.ToLower())).ToList();
             }
             books = books.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
             BooksVM.Books = books;
@@ -75,8 +76,8 @@ namespace ThuVienDienTu.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
-            HttpContext.Session.SetInt32("Index", 0);
             var bookFromDb = await _db.Books.Where(u => u.Id == id).Include(u => u.Publisher).Include(u => u.Author).FirstOrDefaultAsync();
+            bookFromDb.Accesscount++;
             var claimIdentity = (ClaimsIdentity)User.Identity;
             if (claimIdentity.Claims.Count() > 0)
             {
@@ -91,7 +92,7 @@ namespace ThuVienDienTu.Controllers
                 {
                     if (chapter.BookId == id)
                     {
-                        BooksVM.AlreadyBought = true;
+                        BooksVM.AlreadyBought++;
                     }
                 }
                 var readingListOfUser = await _db.ReadingLists.Where(u => u.ApplicationUserId == user.Id).ToListAsync();
@@ -111,21 +112,23 @@ namespace ThuVienDienTu.Controllers
                     BooksVM.ReadingListsVM.Add(readingListViewModel);
                 }
 
-            }
-            var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
+            }  
+            var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id && u.Approved == true).ToListAsync();
             var reviewOfBook = await _db.Reviews.Where(u => u.BookId == id).Include(u => u.ApplicationUser).ToListAsync();
-            var commentOfBook = await _db.Comments.Where(u => u.BookId == id).Include(u => u.ApplicationUser).ToListAsync();
+            var commentOfBook = await _db.Comments.Where(u => u.BookId == id).Include(u => u.ApplicationUser).OrderByDescending(u => u.Date).ToListAsync();
             var authorOfBook = await _db.Authors.Where(u => u.Id == bookFromDb.AuthorId).Include(u => u.Country).FirstOrDefaultAsync();
             BooksVM.Chapters = chapterOfBook;
             BooksVM.Book = bookFromDb;
             BooksVM.Reviews = reviewOfBook;
             BooksVM.Comments = commentOfBook;
             BooksVM.Author = authorOfBook;
+            await _db.SaveChangesAsync();
             return View(BooksVM);
         }
         [ActionName("Details")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.READER_ROLE)]
         public async Task<IActionResult> DetailsPost(int id)
         {
             var book = await _db.Books.Where(u => u.Id == id).Include(u => u.Author).Include(u => u.Publisher).FirstOrDefaultAsync();
@@ -133,10 +136,17 @@ namespace ThuVienDienTu.Controllers
             var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
             var reviewOfBook = await _db.Reviews.Where(u => u.BookId == id).ToListAsync();
             var commentOfBook = await _db.Comments.Where(u => u.BookId == id).ToListAsync();
-            if (user.Balance >= book.BookPrice)
+            var boughtChapters = await _db.Purchaseds.Where(u => u.Chapter.BookId == id && u.ApplicationUserId == user.Id).Select(u => u.Chapter).ToListAsync();
+            var sellingChapters = await _db.Chapters.Where(u => u.BookId == id && u.Price > 0).ToListAsync();
+            boughtChapters.ForEach(delegate (Chapter chapter)
             {
-                var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id).ToListAsync();
-                foreach (var chapter in chaptersOfBook)
+                sellingChapters.Remove(chapter);
+            });
+            if (user.Balance >= sellingChapters.Sum(u => u.Price))
+            {
+                
+                
+                foreach (var chapter in sellingChapters)
                 {
                     Purchased purchased = new Purchased()
                     {
@@ -146,7 +156,7 @@ namespace ThuVienDienTu.Controllers
                     };
                     _db.Purchaseds.Add(purchased);
                 }
-                user.Balance -= book.BookPrice;
+                user.Balance -= sellingChapters.Sum(u => u.Price);
                 await _db.SaveChangesAsync();
                 return RedirectToAction("Index", "Books", new { area = "Customer" });
             }
