@@ -1,20 +1,19 @@
 ﻿@model ThuVienDienTu.Models.ApplicationUser
-<br />
-<br />
-<div class="site-section bg-light" style="text-align:center">
-    <div class="row">
-        <div class="col-6">
-            Đăng ký nhanh tài khoản thành công
-        </div>
+<body>
+    <br />
+    <br />
+    <br />
+    <br />
+    <h1 class="text-info" style="text-align:center;color:grey;margin-top:40px;font-family:Bahnschrift;font-size:30px">Đăng ký nhanh</h1>
+    <div class="site-section bg-light" style="text-align:center !important">
+        <h5>
+                Đăng ký nhanh tài khoản thành công
+        </h5>
+        <p>
+                Tài khoản: @Model.Email
+        </p>
+        <p>
+                Mật khẩu: @Model.Address
+        </p>
     </div>
-    <div class="row">
-        <div class="col-6">
-            Tài khoản: @Model.Email
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            Mật khẩu: @Model.Address
-        </div>
-    </div>
-</div>
+</body>

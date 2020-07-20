@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThuVienDienTu.Data;
+using ThuVienDienTu.DesignPatterns.SingletonPatterns;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
 using ThuVienDienTu.Utility;
@@ -24,6 +25,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         private readonly ApplicationDbContext _context;
         private int PageSize = 10;
         private IWebHostEnvironment _hostEnvironment;
+        private ISingleton _iSingleton;
         [BindProperty]
         public BooksViewModel BooksVM { get; set; }
         public BooksController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
@@ -36,6 +38,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                 Book = new Book(),
                 GenresViewModels = new List<GenresViewModel>()
             };
+            _iSingleton = Singleton.GetInstance;
         }
 
         // GET: Admin/Books
@@ -121,89 +124,98 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePOST()
         {
-            if (ModelState.IsValid)
+            try
             {
-                var book = BooksVM.Book;
-                if (SameBookExist(book))
+                if (ModelState.IsValid)
                 {
-                    ModelState.AddModelError("SameBook", "Sách đã có trong hệ thống");
-                    ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Signed", BooksVM.Book.AuthorId);
-                    ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "PublisherName", BooksVM.Book.PublisherId);
-                    return View(BooksVM);
-                }
-                _context.Add(BooksVM.Book);
-                await _context.SaveChangesAsync();
-                if (BooksVM.BareTag != null)
-                {
-                    List<string> tags = HandingBareTag(BooksVM.BareTag);
-                    foreach (var tag in tags)
+                    var book = BooksVM.Book;
+                    if (SameBookExist(book))
                     {
-                        int id;
-                        Tag bTag = new Tag()
-                        {
-                            Tagname = tag
-                        };
-                        var getTag = await _context.Tag.Where(u => u.Tagname == bTag.Tagname).FirstOrDefaultAsync();
-                        if (getTag == null)
-                        {
-                            _context.Tag.Add(bTag);
-                            await _context.SaveChangesAsync();
-                            id = bTag.Id;
-                        }
-                        else
-                        {
-                            id = getTag.Id;
-                        }
-                        BookTag bookTag = new BookTag()
-                        {
-                            BookId = BooksVM.Book.Id,
-                            TagId = id
-                        };
-                        _context.BookTags.Add(bookTag);
-                        await _context.SaveChangesAsync();
+                        ModelState.AddModelError("SameBook", "Sách đã có trong hệ thống");
+                        ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Signed", BooksVM.Book.AuthorId);
+                        ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "PublisherName", BooksVM.Book.PublisherId);
+                        return View(BooksVM);
                     }
-                }
-                var bookFromDb = _context.Books.Find(BooksVM.Book.Id);
-                var webRootPath = _hostEnvironment.WebRootPath;
-                var files = HttpContext.Request.Form.Files;
-                if (files.Count != 0)
-                {
-                    var uploads = Path.Combine(webRootPath, SD.BookImageFolder);
-                    var extension = Path.GetExtension(files[0].FileName);
-                    using (var fileStream = new FileStream(Path.Combine(uploads, BooksVM.Book.Id + extension), FileMode.Create))
+                    _context.Add(BooksVM.Book);
+                    await _context.SaveChangesAsync();
+                    if (BooksVM.BareTag != null)
                     {
-                        files[0].CopyTo(fileStream);
-                    }
-                    bookFromDb.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + extension;
-                }
-                else
-                {
-                    var uploads = Path.Combine(webRootPath, SD.BookDefaultImage);
-                    System.IO.File.Copy(uploads, webRootPath + @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + ".png");
-                    bookFromDb.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + ".png";
-                }
-                if(BooksVM.GenresViewModels != null)
-                {
-                    foreach (var genresView in BooksVM.GenresViewModels)
-                    {
-                        if (genresView.Selected)
+                        List<string> tags = HandingBareTag(BooksVM.BareTag);
+                        foreach (var tag in tags)
                         {
-                            BookGenres bookGenres = new BookGenres()
+                            int id;
+                            Tag bTag = new Tag()
                             {
-                                BookId = bookFromDb.Id,
-                                GenresId = genresView.Genres.Id
+                                Tagname = tag
                             };
-                            _context.BookGenres.Add(bookGenres);
+                            var getTag = await _context.Tag.Where(u => u.Tagname == bTag.Tagname).FirstOrDefaultAsync();
+                            if (getTag == null)
+                            {
+                                _context.Tag.Add(bTag);
+                                await _context.SaveChangesAsync();
+                                id = bTag.Id;
+                            }
+                            else
+                            {
+                                id = getTag.Id;
+                            }
+                            BookTag bookTag = new BookTag()
+                            {
+                                BookId = BooksVM.Book.Id,
+                                TagId = id
+                            };
+                            _context.BookTags.Add(bookTag);
+                            await _context.SaveChangesAsync();
                         }
                     }
+                    var bookFromDb = _context.Books.Find(BooksVM.Book.Id);
+                    var webRootPath = _hostEnvironment.WebRootPath;
+                    var files = HttpContext.Request.Form.Files;
+                    if (files.Count != 0)
+                    {
+                        var uploads = Path.Combine(webRootPath, SD.BookImageFolder);
+                        var extension = Path.GetExtension(files[0].FileName);
+                        using (var fileStream = new FileStream(Path.Combine(uploads, BooksVM.Book.Id + extension), FileMode.Create))
+                        {
+                            files[0].CopyTo(fileStream);
+                        }
+                        bookFromDb.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + extension;
+                    }
+                    else
+                    {
+                        var uploads = Path.Combine(webRootPath, SD.BookDefaultImage);
+                        System.IO.File.Copy(uploads, webRootPath + @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + ".png");
+                        bookFromDb.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + ".png";
+                    }
+                    if (BooksVM.GenresViewModels != null)
+                    {
+                        foreach (var genresView in BooksVM.GenresViewModels)
+                        {
+                            if (genresView.Selected)
+                            {
+                                BookGenres bookGenres = new BookGenres()
+                                {
+                                    BookId = bookFromDb.Id,
+                                    GenresId = genresView.Genres.Id
+                                };
+                                _context.BookGenres.Add(bookGenres);
+                            }
+                        }
+                    }
+                    bookFromDb.Approved = false;
+                    await _context.SaveChangesAsync();
+                    _iSingleton.LogException("Thêm sách Id: " + bookFromDb.Id + " " + bookFromDb.BookName);
+                    return RedirectToAction(nameof(Index));
                 }
-                bookFromDb.Approved = false;
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Id", BooksVM.Book.AuthorId);
+                ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Id", BooksVM.Book.PublisherId);
+                return View(BooksVM.Book);
             }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Id", BooksVM.Book.AuthorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "Id", BooksVM.Book.PublisherId);
-            return View(BooksVM.Book);
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }    
         }
         // GET: Admin/Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -253,51 +265,62 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id)
         {
-            if (id != BooksVM.Book.Id)
+            try
             {
-                return NotFound();
+                if (id != BooksVM.Book.Id)
+                {
+                    return NotFound();
+                }
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var webRootPath = _hostEnvironment.WebRootPath;
+                        var files = HttpContext.Request.Form.Files;
+                        if (files.Count > 0)
+                        {
+                            if (BooksVM.Book.BookImage != null)
+                            {
+                                var removeUpload = webRootPath + @"" + BooksVM.Book.BookImage;
+                                System.IO.File.Delete(removeUpload);
+                            }
+                            var uploads = Path.Combine(webRootPath, SD.BookImageFolder);
+                            var extension = Path.GetExtension(files[0].FileName);
+                            using (var fileStream = new FileStream(Path.Combine(uploads, BooksVM.Book.Id + extension), FileMode.Create))
+                            {
+                                files[0].CopyTo(fileStream);
+                            }
+                            BooksVM.Book.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + extension;
+                        }
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!BookExists(BooksVM.Book.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    _context.Update(BooksVM.Book);
+                    _iSingleton.LogException("Chỉnh sửa sách Id: " + BooksVM.Book.Id);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Signed", BooksVM.Book.AuthorId);
+                ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "PublisherName", BooksVM.Book.PublisherId);
+                return View(BooksVM.Book);
             }
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }
+            
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var webRootPath = _hostEnvironment.WebRootPath;
-                    var files = HttpContext.Request.Form.Files;
-                    if (files.Count > 0)
-                    {
-                        if (BooksVM.Book.BookImage != null)
-                        {
-                            var removeUpload = webRootPath + @"" + BooksVM.Book.BookImage;
-                            System.IO.File.Delete(removeUpload);
-                        }
-                        var uploads = Path.Combine(webRootPath, SD.BookImageFolder);
-                        var extension = Path.GetExtension(files[0].FileName);
-                        using (var fileStream = new FileStream(Path.Combine(uploads, BooksVM.Book.Id + extension), FileMode.Create))
-                        {
-                            files[0].CopyTo(fileStream);
-                        }
-                        BooksVM.Book.BookImage = @"\" + SD.BookImageFolder + @"\" + BooksVM.Book.Id + extension;
-                    }
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookExists(BooksVM.Book.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                _context.Update(BooksVM.Book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["AuthorId"] = new SelectList(_context.Authors, "Id", "Signed", BooksVM.Book.AuthorId);
-            ViewData["PublisherId"] = new SelectList(_context.Publishers, "Id", "PublisherName", BooksVM.Book.PublisherId);
-            return View(BooksVM.Book);
+            
         }
         //[Authorize(Roles = SD.LIBRARIAN_ROLE)]
         // GET: Admin/Books/Delete/5
@@ -325,16 +348,26 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int bookid)
         {
-            var book = await _context.Books.FindAsync(bookid);
-            if (book.BookImage != null)
+            try
             {
-                var webRootPath = _hostEnvironment.WebRootPath;
-                var removeUploaded = webRootPath + @"" + book.BookImage;
-                System.IO.File.Delete(removeUploaded);
+                var book = await _context.Books.FindAsync(bookid);
+                if (book.BookImage != null)
+                {
+                    var webRootPath = _hostEnvironment.WebRootPath;
+                    var removeUploaded = webRootPath + @"" + book.BookImage;
+                    System.IO.File.Delete(removeUploaded);
+                }
+                _context.Books.Remove(book);
+                await _context.SaveChangesAsync();
+                _iSingleton.LogException("Xóa sách Id: " + bookid + " " + book.BookName);
+                return RedirectToAction(nameof(Index));
             }
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }
+            
         }
 
         private bool SameBookExist(Book book)

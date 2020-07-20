@@ -8,6 +8,7 @@ namespace ThuVienDienTu.Models.ViewModels
     public class ChaptersViewModel
     {
         public Book Book { get; set; }
+        public List<Book> Books { get; set; }
         public Chapter Chapter { get; set;}
         public List<Chapter> Chapters { get; set;}
         public ApplicationUser Censor { get; set; }

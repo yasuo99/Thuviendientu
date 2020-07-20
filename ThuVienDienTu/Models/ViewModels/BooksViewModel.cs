@@ -11,6 +11,7 @@ namespace ThuVienDienTu.Models.ViewModels
     {
         public Book Book { get; set; }
         public List<Book> Books { get; set; }
+        public List<Book> BooksSeen { get; set; }
         public string BareTag { get; set; }
         public Author Author { get; set; }
         public List<GenresViewModel> GenresViewModels { get; set; }
@@ -29,5 +30,6 @@ namespace ThuVienDienTu.Models.ViewModels
         public string Error { get; set; }
         public string BuyRequest { get; set; }
         public int AlreadyBought { get; set; }
+        public int Rating { get; set; }
     }
 }

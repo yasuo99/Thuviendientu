@@ -120,8 +120,8 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
             else
             {
 
-                var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id && u.Price == 0).Include(u => u.Book).ToListAsync();
-                if (chaptersOfBook != null)
+                var chaptersOfBook = await _db.Chapters.Where(u => u.BookId == id && u.Price == 0 && u.Approved == true).Include(u => u.Book).ToListAsync();
+                if (chaptersOfBook.Count > 0)
                 {
 
                     var index = HttpContext.Session.GetInt32(book.Id.ToString() + "Index");
@@ -261,7 +261,7 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
                         }
                         else
                         {
-                            var freeChapters = await _db.Chapters.Where(u => u.BookId == book.Id && u.Price == 0).ToListAsync();
+                            var freeChapters = await _db.Chapters.Where(u => u.BookId == book.Id && u.Price == 0 && u.Approved == true).ToListAsync();
                             var boughtChapters = await _db.Purchaseds.Where(u => u.Chapter.BookId == book.Id && u.ApplicationUserId == user.Id).Select(u => u.Chapter).ToListAsync();
                             freeChapters.AddRange(boughtChapters);
                             BooksVM.Chapter = chapter;
@@ -276,7 +276,7 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
             {
                 if (chapter.Price == 0)
                 {
-                    var freeChapters = await _db.Chapters.Where(u => u.BookId == book.Id && u.Price == 0).ToListAsync();
+                    var freeChapters = await _db.Chapters.Where(u => u.BookId == book.Id && u.Price == 0 && u.Approved == true).ToListAsync();
                     var index = freeChapters.IndexOf(chapter);
                     HttpContext.Session.SetInt32(book.Id.ToString() + "Index", index);
                     return RedirectToAction("Index", new { id = book.Id });

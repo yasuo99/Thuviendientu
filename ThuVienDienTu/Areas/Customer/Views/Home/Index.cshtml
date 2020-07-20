@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="site-section bg-light" id="products-section">
     @if (Model.ApplicationUser != null)
     {
@@ -42,7 +41,7 @@
                         <div class="card">
                             <a asp-action="Details" asp-route-id="@book.Id" title="@book.BookName">
                                 <div class="card-body">
-                                    <img class="card-img" src="@book.BookImage" width="300" height="300" />
+                                    <img class="card-img" src="@book.BookImage" width="300" height="300" data-imagezoom="true" />
                                 </div>
                             </a>
                             <div class="card-footer">
@@ -58,29 +57,92 @@
     </div>
     <div page-model="@Model.PagingInfo" page-action="Index" page-classes-enabled="true"
          page-class="btn border" page-class-normal="btn btn-default active"
-         page-class-selected="btn btn-primary active" class="btn-group m-1"></div>
-</div>
-
-<div class="site-section">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-md-7">
-                <h2 class="heading">Book Screenshot</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos, harum repudiandae provident neque voluptas odio nostrum officiis debitis et vitae, dolorem placeat fugiat recusandae aperiam aspernatur expedita alias, officia. Suscipit!</p>
-                <p class="mb-3">
-                    <a href="#" class="customNextBtn">Prev</a>
-                    <span class="mx-2">/</span>
-                    <a href="#" class="customPrevBtn">Next</a>
-                </p>
-            </div>
-        </div>
-
-        <div class="owl-carousel slide-one-item">
-            @foreach (var book in Model.Books)
+         page-class-selected="btn btn-primary active" class="btn-group m-1" style="border-radius:unset !important"></div>
+    @if (Model.BooksSeen.Count > 0)
+    {
+        <div class="site-section">
+            <hr />
+            <h4>Sách bạn đã xem</h4>
+            @if (Model.BooksSeen.Count > 0)
             {
-                <img src="@book.BookImage" alt="Image" class="img-fluid" style="width:250px;height:300px">
+                <div id="bookseen" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        @{int index1 = 0;}
+                        @for (int j = 0; j < Model.BooksSeen.Count; j++)
+                        {
+                            if (Model.BooksSeen.Count > 5 && (j + 5) >= Model.BooksSeen.Count)
+                            {
+                                break;
+                            }
+                            index1++;
+                            var active = index1 == 1 ? "active" : "";
+                            <div class="carousel-item @active">
+                                <div class="row">
+                                    @for (int k = j; k < j + 5; k++)
+                                    {
+                                        if (Model.BooksSeen.Count > 5 && (j + 5) >= Model.BooksSeen.Count)
+                                        {
+                                            break;
+                                        }
+                                        if (k >= Model.BooksSeen.Count)
+                                        {
+                                            break;
+                                        }
+                                        <div class="col-md-2 col-sm-6 col-12" style="margin-left:27px">
+                                            <a asp-action="Details" asp-controller="Home" class="btn" asp-route-id="@Model.BooksSeen[k].Id" title="@Model.BooksSeen[k].BookName">
+                                                <img style="width:300px;height:400px" src="@Model.BooksSeen[k].BookImage" alt="">
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <a class="carousel-control-prev" style="width:5%;" href="#bookseen" role="button" data-slide="prev">
+                        <i class="fas fa-chevron-circle-left" style="font-size:30px;color:black"></i>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" style="width:5%;" href="#bookseen" role="button" data-slide="next">
+                        <i class="fas fa-chevron-circle-right" style="font-size:30px;color:black"></i>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             }
         </div>
-    </div>
+    }
 </div>
 
+@*<div class="site-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-md-7">
+                    <h2 class="heading">Book Screenshot</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos, harum repudiandae provident neque voluptas odio nostrum officiis debitis et vitae, dolorem placeat fugiat recusandae aperiam aspernatur expedita alias, officia. Suscipit!</p>
+                    <p class="mb-3">
+                        <a href="#" class="customNextBtn">Prev</a>
+                        <span class="mx-2">/</span>
+                        <a href="#" class="customPrevBtn">Next</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="owl-carousel">
+                <div class="owl-stage-outer">
+                    <div class="owl-stage">
+                        @foreach (var book in Model.BooksSeen)
+                        {
+                            <div class="owl-item">
+                                <a asp-action="Details" asp-controller="Home" class="btn" asp-route-id="@book.Id" title="@book.BookName">
+                                    <img style="width:200px;height:200px" src="@book.BookImage" alt="">
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                @foreach (var book in Model.Books)
+                    {
+                        <img src="@book.BookImage" alt="Image" class="img-fluid" width="400">
+                    }
+            </div>
+        </div>
+    </div>*@

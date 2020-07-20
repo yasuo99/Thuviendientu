@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ThuVienDienTu.Data;
+using ThuVienDienTu.Extensions;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
 using ThuVienDienTu.Utility;
@@ -34,6 +36,7 @@ namespace ThuVienDienTu.Controllers
             BooksVM = new BooksViewModel()
             {
                 Book = new Book(),
+                BooksSeen = new List<Book>(),
                 Books = new List<Book>(),
                 Authors = new List<Author>(),
                 Publishers = new List<Publisher>(),
@@ -48,6 +51,10 @@ namespace ThuVienDienTu.Controllers
         }
         public async Task<IActionResult> Index(int productPage = 1, string timkiem = null)
         {
+            if (User.IsInRole(SD.ADMIN_ROLE) || User.IsInRole(SD.LIBRARIAN_ROLE) || User.IsInRole(SD.CENSOR_ROLE))
+            {
+                return RedirectToAction("Index", "CMS", new { area = "Admin" });
+            }
             StringBuilder param = new StringBuilder();
             param.Append("Customer/Home?productPage=:");
             var books = await _db.Books.Include(u => u.Author).Include(u => u.Publisher).Where(u => u.Approved == true).ToListAsync();
@@ -69,6 +76,20 @@ namespace ThuVienDienTu.Controllers
                 TotalItems = count,
                 urlParam = param.ToString()
             };
+            List<int> booksSeen = HttpContext.Session.Get<List<int>>("BookSeenSession");
+            if (booksSeen == null)
+            {
+                booksSeen = new List<int>();
+                HttpContext.Session.Set("BookSeenSession", booksSeen);
+
+            }
+            else
+            {
+                foreach (var item in booksSeen)
+                {
+                    BooksVM.BooksSeen.Add(await _db.Books.Where(u => u.Id == item).FirstOrDefaultAsync());
+                }
+            }
             BooksVM.Authors = authors;
             BooksVM.Publishers = publishers;
             BooksVM.Countries = countries;
@@ -76,8 +97,27 @@ namespace ThuVienDienTu.Controllers
         }
         public async Task<IActionResult> Details(int id)
         {
+            List<int> booksSeen = HttpContext.Session.Get<List<int>>("BookSeenSession");
+            if (booksSeen == null)
+            {
+                booksSeen = new List<int>();
+            }
+            else
+            {
+                foreach (var item in booksSeen)
+                {
+                    BooksVM.BooksSeen.Add(await _db.Books.Where(u => u.Id == item).FirstOrDefaultAsync());
+                }
+            }
+            var bookSeen = await _db.Books.Where(u => u.Id == id).FirstOrDefaultAsync();
+            if (!booksSeen.Contains(bookSeen.Id))
+            {
+                booksSeen.Add(bookSeen.Id);
+            }
+            HttpContext.Session.Set("BookSeenSession", booksSeen);
             var bookFromDb = await _db.Books.Where(u => u.Id == id).Include(u => u.Publisher).Include(u => u.Author).FirstOrDefaultAsync();
             bookFromDb.Accesscount++;
+            
             var claimIdentity = (ClaimsIdentity)User.Identity;
             if (claimIdentity.Claims.Count() > 0)
             {
@@ -112,11 +152,16 @@ namespace ThuVienDienTu.Controllers
                     BooksVM.ReadingListsVM.Add(readingListViewModel);
                 }
 
-            }  
+            }
             var chapterOfBook = await _db.Chapters.Where(u => u.BookId == id && u.Approved == true).ToListAsync();
             var reviewOfBook = await _db.Reviews.Where(u => u.BookId == id).Include(u => u.ApplicationUser).ToListAsync();
             var commentOfBook = await _db.Comments.Where(u => u.BookId == id).Include(u => u.ApplicationUser).OrderByDescending(u => u.Date).ToListAsync();
             var authorOfBook = await _db.Authors.Where(u => u.Id == bookFromDb.AuthorId).Include(u => u.Country).FirstOrDefaultAsync();
+            if(reviewOfBook.Count > 0)
+            {
+                BooksVM.Rating = (int)(reviewOfBook.Sum(u => u.Star) / reviewOfBook.Count);
+
+            }
             BooksVM.Chapters = chapterOfBook;
             BooksVM.Book = bookFromDb;
             BooksVM.Reviews = reviewOfBook;
@@ -144,8 +189,8 @@ namespace ThuVienDienTu.Controllers
             });
             if (user.Balance >= sellingChapters.Sum(u => u.Price))
             {
-                
-                
+
+
                 foreach (var chapter in sellingChapters)
                 {
                     Purchased purchased = new Purchased()

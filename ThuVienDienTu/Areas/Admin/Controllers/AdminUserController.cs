@@ -19,7 +19,7 @@ using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
-    [Authorize(Roles = SD.ADMIN_ROLE)]
+    //[Authorize(Roles = SD.ADMIN_ROLE)]
     [Area("Admin")]
     public class AdminUserController : Controller
     {

@@ -84,7 +84,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             }
             else
             {
-                return View(nameof(Index));
+                return RedirectToAction("Index","CMS");
             }
         }
     }

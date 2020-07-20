@@ -589,6 +589,13 @@ C:\Users\Minh Khue PC\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.
 C:\Users\Minh Khue PC\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.pdb
 C:\Users\Minh Khue PC\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.genruntimeconfig.cache
 C:\Users\Minh Khue PC\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Customer\Views\Account\Successful.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.AssemblyInfoInputs.cache
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.AssemblyInfo.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.csproj.CoreCompileInputs.cache
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.RazorAssemblyInfo.cache
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.RazorAssemblyInfo.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\appsettings.json
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
@@ -744,13 +751,6 @@ C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\runti
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.AssemblyInfoInputs.cache
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.AssemblyInfo.cs
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.csproj.CoreCompileInputs.cache
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.RazorAssemblyInfo.cache
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.RazorAssemblyInfo.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.TagHelpers.input.cache
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.TagHelpers.output.cache
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.RazorCoreGenerate.cache
@@ -784,6 +784,8 @@ C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Genres\Details.cshtml.g.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Genres\Edit.cshtml.g.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Genres\Index.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Log\Error.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Log\Index.cshtml.g.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Publishers\Create.cshtml.g.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Publishers\Delete.cshtml.g.cs
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Publishers\Details.cshtml.g.cs
@@ -882,5 +884,9 @@ C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVi
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.pdb
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.genruntimeconfig.cache
 C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\ThuVienDienTu.csprojAssemblyReference.cache
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Exception\Index.cshtml.g.cs
-C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Exception\Error.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Comments\Create.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Comments\Delete.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Comments\Details.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Comments\Edit.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\Comments\Index.cshtml.g.cs
+C:\Users\Thanh\Desktop\Thuviendientu\ThuVienDienTu\obj\Debug\netcoreapp3.1\Razor\Areas\Customer\Views\ReviewAndComment\Index.cshtml.g.cs

@@ -34,7 +34,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Settings</a>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Cài đặt</a>
                     <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Logout</a>
@@ -67,11 +67,11 @@
                                 </nav>
                             </div>
                         }
-                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE))
                         {
                             <a class="nav-link collapsed" href="#" data-target="#collapseLayouts" data-toggle="collapse" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Kiểm duyệt
+                                Kiểm duyệt sách
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
@@ -79,8 +79,18 @@
                                     <a class="nav-link" asp-area="Admin" asp-controller="Censor" asp-action="Index">Danh sách chờ</a>
                                 </nav>
                             </div>
+                            <a class="nav-link collapsed" href="#" data-target="#collapseComments" data-toggle="collapse" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Kiểm duyệt bình luận
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseComments" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Comments" asp-action="Index">Danh sách</a>
+                                </nav>
+                            </div>
                         }
-                        else
+                        @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE) || User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
                         {
                             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -95,8 +105,8 @@
                                     </a>
                                     <div class="collapse" id="pagesCollapseGame" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Books" asp-action="Index">Index</a>
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Books" asp-action="Create">Create</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Books" asp-action="Index">Danh sách</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Books" asp-action="Create">Thêm mới</a>
                                         </nav>
                                     </div>
                                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseStudio" aria-expanded="false" aria-controls="pagesCollapseStudio">
@@ -105,8 +115,8 @@
                                     </a>
                                     <div class="collapse" id="pagesCollapseStudio" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Authors" asp-action="Index">Index</a>
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Authors" asp-action="Create">Create</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Authors" asp-action="Index">Danh sách</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Authors" asp-action="Create">Thêm mới</a>
                                         </nav>
                                     </div>
                                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseCode" aria-expanded="false" aria-controls="pagesCollapseCode">
@@ -115,8 +125,8 @@
                                     </a>
                                     <div class="collapse" id="pagesCollapseCode" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Codes" asp-action="Index">Index</a>
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Codes" asp-action="Create">Create</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Chapters" asp-action="Index">Danh sách</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Chapters" asp-action="Create">Thêm mới</a>
                                         </nav>
                                     </div>
                                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseDiscount" aria-expanded="false" aria-controls="pagesCollapseDiscount">
@@ -125,8 +135,8 @@
                                     </a>
                                     <div class="collapse" id="pagesCollapseDiscount" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Discounts" asp-action="Index">Index</a>
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Discounts" asp-action="Create">Create</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Countries" asp-action="Index">Danh sách</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Countries" asp-action="Create">Thêm mới</a>
                                         </nav>
                                     </div>
                                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseCountry" aria-expanded="false" aria-controls="pagesCollapseCountry">
@@ -135,8 +145,8 @@
                                     </a>
                                     <div class="collapse" id="pagesCollapseCountry" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Countries" asp-action="Index">Index</a>
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Countries" asp-action="Create">Create</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Genres" asp-action="Index">Danh sách</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Genres" asp-action="Create">Thêm mới</a>
                                         </nav>
                                     </div>
                                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseTag" aria-expanded="false" aria-controls="pagesCollapseTag">
@@ -145,8 +155,8 @@
                                     </a>
                                     <div class="collapse" id="pagesCollapseTag" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
                                         <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Tags" asp-action="Index">Index</a>
-                                            <a class="nav-link" asp-area="Admin" asp-controller="Tags" asp-action="Create">Create</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Tags" asp-action="Index">Danh sách</a>
+                                            <a class="nav-link" asp-area="Admin" asp-controller="Tags" asp-action="Create">Thêm mới</a>
                                         </nav>
                                     </div>
                                 </nav>
@@ -156,7 +166,22 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    Admin
+                    @if (User.IsInRole(ThuVienDienTu.Utility.SD.ADMIN_ROLE))
+                    {
+                        <span>Quản trị</span>
+                    }
+                    @if (User.IsInRole(ThuVienDienTu.Utility.SD.CENSOR_ROLE))
+                    {
+                        <span>
+                            Kiểm duyệt
+                        </span>
+                    }
+                    @if(User.IsInRole(ThuVienDienTu.Utility.SD.LIBRARIAN_ROLE))
+                    {
+                        <span>
+                            Thủ thư
+                        </span>
+                    }
                 </div>
             </nav>
         </div>

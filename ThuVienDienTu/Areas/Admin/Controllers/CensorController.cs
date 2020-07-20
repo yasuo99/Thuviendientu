@@ -13,7 +13,7 @@ using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
-    //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.CENSOR_ROLE)]
+    [Authorize(Roles = SD.ADMIN_ROLE + "," + SD.CENSOR_ROLE)]
     [Area("Admin")]
     public class CensorController : Controller
     {
@@ -61,14 +61,14 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             var chapter = await  _db.Chapters.Where(u => u.Id == id).FirstOrDefaultAsync();
             chapter.Approved = true;
             await _db.SaveChangesAsync();
-            return RedirectToAction("Index", new { productPage = 1 });
+            return RedirectToAction("Index", "Read", new {area = "Customer", id = chapter.BookId});
         }
         public async Task<IActionResult> ChapterDecline(int id)
         {
             var chapter = await _db.Chapters.Where(u => u.Id == id).FirstOrDefaultAsync();
             chapter.Approved = true;
             await _db.SaveChangesAsync();
-            return RedirectToAction("Index", new { productPage = 1 });
+            return RedirectToAction("Index", "Read", new { area = "Customer", id = chapter.BookId });
         }
         public async Task<IActionResult> Publish(int id)
         {

@@ -20,9 +20,10 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
         {
             _db = dbContext;
         }
-        public IActionResult Index()
+        public IActionResult Index(int id)
         {
-            return View();
+            var review = _db.Reviews.Where(u => u.BookId == id).Include(u => u.Book).FirstOrDefault();
+            return View(review);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -44,17 +45,23 @@ namespace ThuVienDienTu.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = SD.READER_ROLE)]
-        public async Task<IActionResult> AddReview(int bookId, int star, string userReview)
+        public async Task<IActionResult> AddReview(int bookId, [Bind("Id,BookId,ApplicationUserId,Star,UserReview")] Review review)
         {
             var user = await _db.ApplicationUsers.Where(u => u.Email == User.Identity.Name).FirstOrDefaultAsync();
-            Review review = new Review()
+            var userReview = await _db.Reviews.Where(u => u.ApplicationUserId == user.Id && u.BookId == bookId).FirstOrDefaultAsync();
+            if(userReview != null)
             {
-                BookId = bookId,
-                Star = star,
-                UserReview = userReview,
-                ApplicationUserId = user.Id
-            };
-            _db.Add(review);
+                userReview.Star = review.Star;
+                userReview.UserReview = review.UserReview;
+                _db.Update(userReview);
+            }
+            else
+            {
+                review.ApplicationUserId = user.Id;
+                review.BookId = bookId;
+                _db.Add(review);
+            }
+            
             await _db.SaveChangesAsync();
             return RedirectToAction("Index", "Books", new { area = "Customer" });
         }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ThuVienDienTu.Models.Chapter>
+﻿@model ThuVienDienTu.Models.ViewModels.ChaptersViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -7,49 +7,63 @@
 <br />
 <br />
 <div class="row">
-    <div class="col-6">
+    <div class="col-3">
         <h2 class="text-info"> Danh sách chương</h2>
     </div>
-    <div class="col-6 text-right">
-        <a asp-area="Admin" asp-controller="Chapters" asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm chương</a>
+    <div class="col-5">
+        <form asp-controller="Chapters" asp-action="Index">
+            <select name="bookId" onchange="this.form.submit()" class="form-control">
+                <option>Sách</option>
+                @foreach (var book in Model.Books)
+                {
+                    <option value="@book.Id ">@book.BookName</option>
+                }
+            </select>
+        </form>
     </div>
+    @if (Model.Book.BookName != null)
+    {
+        <div class="col-3 text-right">
+            <a asp-area="Admin" asp-controller="Chapters" asp-action="Create" asp-route-id="@Model.Book.Id" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; Thêm chương</a>
+        </div>
+    }
 </div>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Book)
+                @Html.DisplayNameFor(model => model.Chapter.Book.BookName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Chaptername)
+                @Html.DisplayNameFor(model => model.Chapter.Chaptername)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ChapterContent)
+                @Html.DisplayNameFor(model => model.Chapter.ChapterContent)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.Chapter.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EditDate)
+                @Html.DisplayNameFor(model => model.Chapter.EditDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApplicationUser)
+                @Html.DisplayNameFor(model => model.Chapter.ApplicationUser)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Chapters)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Book.Id)
+                    @Html.DisplayFor(modelItem => item.Book.BookName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Chaptername)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ChapterContent)
+                <td style="width:300px;height:300px">
+                    <p style="text-overflow:ellipsis;overflow:hidden;height:300px" title="@item.ChapterContent">@item.ChapterContent</p>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Price)

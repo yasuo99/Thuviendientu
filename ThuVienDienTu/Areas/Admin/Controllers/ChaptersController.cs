@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,6 +10,7 @@ using ThuVienDienTu.Data;
 using ThuVienDienTu.DesignPatterns.SingletonPatterns;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Models.ViewModels;
+using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
@@ -40,10 +42,29 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         }
 
         // GET: Admin/Chapters
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int productPage = 1,int bookId = 0)
         {
-            var applicationDbContext = _context.Chapters.Include(c => c.ApplicationUser).Include(c => c.Book);
-            return View(await applicationDbContext.ToListAsync());
+            StringBuilder param = new StringBuilder();
+            param.Append("/Admin/Chapters?productPage=:");
+            var applicationDbContext = _context.Chapters.Include(c => c.ApplicationUser).Include(c => c.Book).ToList();
+            var count = applicationDbContext.Count();
+            applicationDbContext = applicationDbContext.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
+            PagingInfo pagingInfo = new PagingInfo()
+            {
+                TotalItems = count,
+                urlParam = param.ToString(),
+                CurrentPage = productPage,
+                ItemsPerPage = PageSize
+            };
+            ChaptersVM.Chapters = applicationDbContext;
+            ChaptersVM.Books = applicationDbContext.Select(u => u.Book).Distinct().ToList();
+            if(bookId > 0)
+            {
+                ChaptersVM.Chapters = applicationDbContext.Where(u => u.BookId == bookId).ToList();
+                ChaptersVM.Book = await _context.Books.Where(u => u.Id == bookId).FirstOrDefaultAsync();
+            }
+            ChaptersVM.PagingInfo = pagingInfo;
+            return View(ChaptersVM);
         }
 
         // GET: Admin/Chapters/Details/5
@@ -149,8 +170,12 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
             {
                 try
                 {
-                    chapter.Approved = false;
+                    if (User.IsInRole(SD.LIBRARIAN_ROLE))
+                    {
+                        chapter.Approved = false;
+                    }
                     _context.Update(chapter);
+                    _iSingleton.LogException("Chỉnh sửa chương Id: " + id + " của sách Id: " + chapter.BookId);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException e)
@@ -185,6 +210,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     chapter.ApplicationUserId = user.Id;
                     chapter.EditDate = DateTime.Now;
                     _context.Update(chapter);
+                    _iSingleton.LogException("Cập nhật chương Id: " + chapter.Id + " bởi kiểm duyệt viên email: " + user.Email);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException e)
@@ -230,17 +256,18 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         {
             try
             {
-
+                var chapter = await _context.Chapters.FindAsync(id);
+                _context.Chapters.Remove(chapter);
+                await _context.SaveChangesAsync();
+                _iSingleton.LogException("Xóa chương Id: " + id + " của sách Id: " + chapter.BookId);
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
             {
                 _iSingleton.LogException(e.Message);
                 return RedirectToAction("Error", "Log");
             }
-            var chapter = await _context.Chapters.FindAsync(id);
-            _context.Chapters.Remove(chapter);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+           
         }
 
         private bool ChapterExists(int id)

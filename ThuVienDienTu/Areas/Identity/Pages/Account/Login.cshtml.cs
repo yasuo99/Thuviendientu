@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using ThuVienDienTu.Utility;
+using ThuVienDienTu.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ThuVienDienTu.Areas.Identity.Pages.Account
 {
@@ -19,15 +22,17 @@ namespace ThuVienDienTu.Areas.Identity.Pages.Account
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ApplicationDbContext _db;
         private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager, ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _db = dbContext;
         }
 
         [BindProperty]
@@ -83,6 +88,11 @@ namespace ThuVienDienTu.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _db.ApplicationUsers.Where(u => u.Email == Input.Email).FirstOrDefaultAsync();
+                    if(await _userManager.IsInRoleAsync(user,SD.ADMIN_ROLE) || await _userManager.IsInRoleAsync(user, SD.LIBRARIAN_ROLE) || await _userManager.IsInRoleAsync(user, SD.CENSOR_ROLE))
+                    {
+                        return RedirectToAction("Index", "CMS", new { area = "Admin" });
+                    }    
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

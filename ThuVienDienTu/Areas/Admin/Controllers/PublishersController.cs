@@ -10,21 +10,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ThuVienDienTu.Data;
+using ThuVienDienTu.DesignPatterns.SingletonPatterns;
 using ThuVienDienTu.Models;
 using ThuVienDienTu.Utility;
 
 namespace ThuVienDienTu.Areas.Admin.Controllers
 {
-    
+
     [Area("Admin")]
     public class PublishersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private ISingleton _iSingleton;
         private IWebHostEnvironment _hostEnvironment;
         public PublishersController(ApplicationDbContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
             _hostEnvironment = hostEnvironment;
+            _iSingleton = Singleton.GetInstance;
         }
 
         // GET: Admin/Publishers
@@ -60,7 +63,7 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         public IActionResult Create()
         {
             var countriesFromDb = _context.Countries.ToList();
-            if(countriesFromDb == null)
+            if (countriesFromDb == null)
             {
                 return RedirectToAction("Create", "Countries");
             }
@@ -72,43 +75,53 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[Authorize(Roles = SD.ADMIN_ROLE + "," + SD.LIBRARIAN_ROLE)]
-        [HttpPost,ActionName("Create")]
+        [HttpPost, ActionName("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePOST(string publisherName, string description, int countryId)
         {
-            Publisher publisher = new Publisher()
+            try
             {
-                PublisherName = publisherName,
-                Description = description,
-                CountryId = countryId
-            };
-            if (ModelState.IsValid)
-            {
-                _context.Add(publisher);
-                await _context.SaveChangesAsync();
-                var webRootPath = _hostEnvironment.WebRootPath;
-                var files = HttpContext.Request.Form.Files;
-                if(files.Count != 0)
+                Publisher publisher = new Publisher()
                 {
-                    var uploads = Path.Combine(webRootPath, SD.PublisherImageFolder);
-                    var extension = Path.GetExtension(files[0].FileName);
-                    using (var fileStream = new FileStream(Path.Combine(uploads, publisher.Id + extension), FileMode.Create))
+                    PublisherName = publisherName,
+                    Description = description,
+                    CountryId = countryId
+                };
+                if (ModelState.IsValid)
+                {
+                    _context.Add(publisher);
+                    await _context.SaveChangesAsync();
+                    var webRootPath = _hostEnvironment.WebRootPath;
+                    var files = HttpContext.Request.Form.Files;
+                    if (files.Count != 0)
                     {
-                        files[0].CopyTo(fileStream);  
-                    };
-                    publisher.PublisherLogo = @"\" + SD.PublisherImageFolder + @"\" + publisher.Id + extension;
+                        var uploads = Path.Combine(webRootPath, SD.PublisherImageFolder);
+                        var extension = Path.GetExtension(files[0].FileName);
+                        using (var fileStream = new FileStream(Path.Combine(uploads, publisher.Id + extension), FileMode.Create))
+                        {
+                            files[0].CopyTo(fileStream);
+                        };
+                        publisher.PublisherLogo = @"\" + SD.PublisherImageFolder + @"\" + publisher.Id + extension;
+                    }
+                    else
+                    {
+                        var uploads = Path.Combine(webRootPath, SD.DefaultPublisherLogo);
+                        System.IO.File.Copy(uploads, webRootPath + @"\" + SD.PublisherImageFolder + @"\" + publisher.Id + ".png");
+                        publisher.PublisherLogo = @"\" + SD.PublisherImageFolder + @"\" + publisher.Id + ".png";
+                    }
+                    await _context.SaveChangesAsync();
+                    _iSingleton.LogException("Thêm NXB Id: " + publisher.Id + " " + publisher.PublisherName);
+                    return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    var uploads = Path.Combine(webRootPath, SD.DefaultPublisherLogo);
-                    System.IO.File.Copy(uploads, webRootPath + @"\" +SD.PublisherImageFolder + @"\" + publisher.Id + ".png");
-                    publisher.PublisherLogo = @"\" + SD.PublisherImageFolder + @"\" + publisher.Id + ".png";
-                }
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "CountryName", publisher.CountryId);
+                return View(publisher);
             }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "CountryName", publisher.CountryId);
-            return View(publisher);
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }
+
         }
 
         // GET: Admin/Publishers/Edit/5
@@ -149,23 +162,23 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     _context.Update(publisher);
                     var webRootPath = _hostEnvironment.WebRootPath;
                     var files = HttpContext.Request.Form.Files;
-                    if(files.Count > 0)
+                    if (files.Count > 0)
                     {
-                        if(publisher.PublisherLogo != null)
+                        if (publisher.PublisherLogo != null)
                         {
-                            var removeUpload = webRootPath+@""+publisher.PublisherLogo;
+                            var removeUpload = webRootPath + @"" + publisher.PublisherLogo;
                             System.IO.File.Delete(removeUpload);
                         }
                         var uploads = Path.Combine(webRootPath, SD.PublisherImageFolder);
                         var extension = Path.GetExtension(files[0].FileName);
-                        using (var fileStream = new FileStream(Path.Combine(uploads, publisher.Id + extension),FileMode.Create))
+                        using (var fileStream = new FileStream(Path.Combine(uploads, publisher.Id + extension), FileMode.Create))
                         {
                             files[0].CopyTo(fileStream);
                         }
                         publisher.PublisherLogo = @"\" + SD.PublisherImageFolder + @"\" + publisher.Id + extension;
-                    }    
+                    }
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!PublisherExists(publisher.Id))
                     {
@@ -173,14 +186,17 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
                     }
                     else
                     {
-                        throw;
+                        _iSingleton.LogException(e.Message);
+                        return RedirectToAction("Error", "Log");
                     }
-                }               
+                }
+                _iSingleton.LogException("Cập nhật NXB Id: " + id);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "CountryName", publisher.CountryId);
             return View(publisher);
+
         }
 
         // GET: Admin/Publishers/Delete/5
@@ -210,15 +226,25 @@ namespace ThuVienDienTu.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int publisherid)
         {
             var publisher = await _context.Publishers.FindAsync(publisherid);
-            if(publisher.PublisherLogo != null)
+            try
             {
-                var webRootPath = _hostEnvironment.WebRootPath;
-                var removeUploaded = webRootPath + @"" + publisher.PublisherLogo;
-                System.IO.File.Delete(removeUploaded);
-            }    
-            _context.Publishers.Remove(publisher);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                if (publisher.PublisherLogo != null)
+                {
+                    var webRootPath = _hostEnvironment.WebRootPath;
+                    var removeUploaded = webRootPath + @"" + publisher.PublisherLogo;
+                    System.IO.File.Delete(removeUploaded);
+                }
+                _context.Publishers.Remove(publisher);
+                await _context.SaveChangesAsync();
+                _iSingleton.LogException("Xóa NXB : " + publisher.PublisherName);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception e)
+            {
+                _iSingleton.LogException(e.Message);
+                return RedirectToAction("Error", "Log");
+            }
+           
         }
 
         private bool PublisherExists(int id)

@@ -5,24 +5,27 @@
 
 <br />
 <br />
-<h4>Nạp tiền vào tài khoản</h4>
-<form asp-area="Customer" asp-controller="Topup" asp-action="TopupWithPaypal" method="post">
-    <div id="warning" class="text-warning" hidden>Số tiền nạp phải tối thiếu 1$ và tối đa là 100$</div>
-    <label>Nhập số tiền nạp:</label>
-    <input id="topupAmount" name="topupAmount" placeholder="Tối thiểu 1 tối đa 100" class="form-control"/>
-    <button id="submitBtn" type="submit" class="btn btn-primary" onclick="CheckValid()">Thanh toán</button>
-</form>
-<script>
-    function CheckValid() {
-        var value = document.getElementById("topupAmount").value;
-        if (value <= 0 || value > 100) {
-            document.getElementById("submitBtn").type = "button";
-            document.getElementById("warning").hidden = false;
-        }
-        else {
-            document.getElementById("submitBtn").type = "submit";
-            document.getElementById("warning").hidden = true;
-        }
-    }
-</script>
-
+<body>
+    <div class="site-section" style="align-content:center">
+        <h4>Nạp tiền vào tài khoản</h4>
+        <form asp-area="Customer" asp-controller="Topup" asp-action="TopupWithPaypal" method="post">
+            <div id="warning" class="text-warning" hidden>Số tiền nạp phải tối thiếu 1$ và tối đa là 100$</div>
+            <label>Nhập số tiền nạp:</label>
+            <input id="topupAmount" name="topupAmount" placeholder="Tối thiểu 1 tối đa 100" class="form-control" style="width:400px" />
+            <button id="submitBtn" type="submit" class="btn btn-primary" onclick="CheckValid()">Thanh toán</button>
+        </form>
+        <script>
+            function CheckValid() {
+                var value = document.getElementById("topupAmount").value;
+                if (value <= 0 || value > 100) {
+                    document.getElementById("submitBtn").type = "button";
+                    document.getElementById("warning").hidden = false;
+                }
+                else {
+                    document.getElementById("submitBtn").type = "submit";
+                    document.getElementById("warning").hidden = true;
+                }
+            }
+        </script>
+    </div>
+</body>

@@ -1,0 +1,88 @@
+﻿@model ThuVienDienTu.Models.Review
+@{
+    ViewData["Title"] = "Index";
+}
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="site-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <label style="font-family:Bahnschrift;font-size:30px;text-align:center">@Model.Book.BookName</label>
+                    <img src="@Model.Book.BookImage" width="300" height="400" />
+                </div>
+                <div class="col-md-4">
+                    <form asp-action="AddReview" method="post" asp-route-bookId="@Model.Book.Id">
+                        <input asp-for="@Model.ApplicationUserId" hidden/>
+                        <input asp-for="@Model.Id" hidden />
+                        <h5>Nhận xét của bạn</h5>
+                        <label>Đánh giá: <span><i id="star1" onmouseover="HoverStar(this.id)" class="fa fa-star"></i><i id="star2" onmouseover="HoverStar(this.id)" class="fa fa-star"></i><i id="star3" onmouseover="HoverStar(this.id)" class="fa fa-star"></i><i id="star4" onmouseover="HoverStar(this.id)" class="fa fa-star"></i><i id="star5" onmouseover="HoverStar(this.id)" class="fa fa-star"></i></span> </label>
+                        <input id="star" asp-for="@Model.Star" hidden />
+                        <label>Nhận xét: <span><input asp-for="@Model.UserReview" width="300" height="200" /></span></label>
+                        <button type="submit" class="btn btn-primary" ><i class="fas fa-paper-plane"></i> Thêm nhận xét</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            document.getElementById("star1").style.setProperty("color", "gold", "important");
+            var rating = document.getElementById("star").value;
+            HoverStar("star" + rating);
+        })
+        function HoverStar(id) {
+            switch (id) {
+                case "star1":
+                    document.getElementById("star1").style.setProperty("color", "gold", "important");
+                    document.getElementById("star2").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star3").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star4").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star5").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star").value = 1;
+                    break;
+                case "star2":
+                    document.getElementById("star1").style.setProperty("color", "gold", "important");
+                    document.getElementById("star2").style.setProperty("color", "gold", "important");
+                    document.getElementById("star3").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star4").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star5").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star").value = 2;
+                    break;
+                case "star3":
+                    document.getElementById("star1").style.setProperty("color", "gold", "important");
+                    document.getElementById("star2").style.setProperty("color", "gold", "important");
+                    document.getElementById("star3").style.setProperty("color", "gold", "important");
+                    document.getElementById("star4").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star5").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star").value = 3;
+                    break;
+                case "star4":
+                    document.getElementById("star1").style.setProperty("color", "gold", "important");
+                    document.getElementById("star2").style.setProperty("color", "gold", "important");
+                    document.getElementById("star3").style.setProperty("color", "gold", "important");
+                    document.getElementById("star4").style.setProperty("color", "gold", "important");
+                    document.getElementById("star5").style.removeProperty("color", "gold", "important");
+                    document.getElementById("star").value = 4;
+                    break;
+                case "star5":
+                    document.getElementById("star1").style.setProperty("color", "gold", "important");
+                    document.getElementById("star2").style.setProperty("color", "gold", "important");
+                    document.getElementById("star3").style.setProperty("color", "gold", "important");
+                    document.getElementById("star4").style.setProperty("color", "gold", "important");
+                    document.getElementById("star5").style.setProperty("color", "gold", "important");
+                    document.getElementById("star").value = 5;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    </script>
+</body>
